@@ -6,12 +6,14 @@ function createGUI() {
 
 	// add logo up top (uses 'assets/generator-logo9.svg', see style.css)
 	let logo = gui.addField(new Field(gui.div, 'logo', ''));
+	// let title = gui.addTitle(3, 'Tattooo Creator', true);
+	// title.div.style.fontSize = '1.5rem';
+	// title.div.style.marginTop = '-1em';
 
 	const appearanceTab = new Tab('Appearance');
 	const exportTab = new Tab('Export');
-	const settingsTab = new Tab('Settings');
 
-	gui.addTabs(appearanceTab, exportTab, settingsTab);
+	gui.addTabs(appearanceTab, exportTab);
 
 	// ------------------------------ APPEARANCE ------------------------------
 	appearanceTab.addTitle(2, 'Dimensions', false);
@@ -377,11 +379,11 @@ function createGUI() {
 	loaderDiv.parent(guiVideoLoadingDiv.div);
 
 	// ------------------------------ SETTINGS ------------------------------
-	settingsTab.addTitle(2, 'Settings file', false);
+	exportTab.addTitle(2, 'Settings file', false);
 
-	settingsTab.addController(
+	exportTab.addController(
 		new Button(
-			settingsTab,
+			exportTab,
 			'buttonSaveSettings',
 			'LANG_SAVE_SETTINGS',
 			controller => {
@@ -397,9 +399,9 @@ function createGUI() {
 		)
 	);
 
-	settingsTab.addController(
+	exportTab.addController(
 		new JSONFileLoader(
-			settingsTab,
+			exportTab,
 			'jsonFileLoaderSettings',
 			'LANG_LOAD_SETTINGS',
 			(controller, file) => {
@@ -416,18 +418,18 @@ function createGUI() {
 		)
 	);
 
-	settingsTab.addDivider();
+	exportTab.addDivider();
 
-	settingsTab.addTitle(2, 'LANG_SUPPORT', false);
+	exportTab.addTitle(2, 'LANG_SUPPORT', false);
 
-	settingsTab.addController(
-		new Button(settingsTab, 'buttonHelpMe', 'LANG_HELP', controller => {
+	exportTab.addController(
+		new Button(exportTab, 'buttonHelpMe', 'LANG_HELP', controller => {
 			helpMe();
 		})
 	);
 
 	if (Generator.supportEmail?.indexOf('@') > -1) {
-		let contactField = settingsTab.addHTMLAsNewField(
+		let contactField = exportTab.addHTMLAsNewField(
 			lang.process(
 				`<a href="mailto:${Generator.supportEmail}` +
 					`?subject=${Generator.name} generator` +
@@ -435,7 +437,7 @@ function createGUI() {
 			)
 		);
 		contactField.div.id('contact');
-		contactField.div.parent(settingsTab.div);
+		contactField.div.parent(exportTab.div);
 	}
 
 	// ------------------------------ GUI BOTTOM ------------------------------

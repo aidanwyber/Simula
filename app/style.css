@@ -81,7 +81,7 @@ body {
 	/* main colours */
 	--base-col: #100082;
 	--text-col-on-base: var(--bg-col);
-	--hover-col: #bffb50;
+	--hover-col: #ffe500;
 	--focus-col: var(--base-col);
 	--info-col: #a830f6;
 	--error-col: #e95e2a;
@@ -136,7 +136,9 @@ body:where(.dark-mode) {
 	to style the dark mode of any element */
 	--bgRGB: var(--blackRGB);
 	--fgRGB: var(--whiteRGB);
-	--base-col: #FFE500
+	--base-col: #ffe500;
+	--hover-col: var(--white);
+	--text-col-on-hover: var(--black);
 }
 
 /********************************* SELECTIONS *********************************/
@@ -201,13 +203,13 @@ body:where(.dark-mode) {
 
 /********************************* LOGO STYLING *********************************/
 #logo {
-	min-height: 4rem;
+	min-height: 5rem;
 	background-image: url('assets/generator-logo.svg');
 	background-position-x: center;
 	background-position-y: center;
 	background-size: contain;
 	background-repeat: no-repeat;
-	margin-bottom: 0.5rem;
+	/* margin-bottom: 0.5rem; */
 }
 
 body:where(.dark-mode) #logo {
@@ -475,7 +477,7 @@ select {
 }
 
 body:where(.dark-mode) select {
-	--arrow-url: url('data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%3Csvg%20width%3D%2222.498px%22%20height%3D%2222.11px%22%20version%3D%221.1%22%20viewBox%3D%22352.21%20170.29%2022.498%2022.11%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Abx%3D%22https%3A%2F%2Fboxy-svg.com%22%3E%3Cpath%20class%3D%22select-arrow-svg%22%20d%3D%22m363.46%20183.85-4.9997-5.0233h10z%22%20fill%3D%22%23FFE500%22%20stroke-width%3D%220px%22%20bx%3Ashape%3D%22triangle%20-373.34%20-187.05%2019.493%209.792%200.5%200%201%406f3e846f%22%2F%3E%3C%2Fsvg%3E');	
+	--arrow-url: url('data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%3Csvg%20width%3D%2222.498px%22%20height%3D%2222.11px%22%20version%3D%221.1%22%20viewBox%3D%22352.21%20170.29%2022.498%2022.11%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Abx%3D%22https%3A%2F%2Fboxy-svg.com%22%3E%3Cpath%20class%3D%22select-arrow-svg%22%20d%3D%22m363.46%20183.85-4.9997-5.0233h10z%22%20fill%3D%22%23FFE500%22%20stroke-width%3D%220px%22%20bx%3Ashape%3D%22triangle%20-373.34%20-187.05%2019.493%209.792%200.5%200%201%406f3e846f%22%2F%3E%3C%2Fsvg%3E');
 }
 
 select::-ms-expand {

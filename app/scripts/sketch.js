@@ -8,7 +8,7 @@ let canvas,
 	changeSet,
 	dtime,
 	duration,
-	ffmpegWaiter = 0,
+	// ffmpegWaiter = 0,
 	FR,
 	isCapturingFrames = false,
 	isPlaying = true,
@@ -40,7 +40,7 @@ function preload() {
 }
 
 function setup() {
-	initUtils(10, ffmpegFR || 30);
+	initUtils(10, 30);
 
 	canvas =
 		theShader === undefined
@@ -55,7 +55,7 @@ function setup() {
 
 	createGUI();
 
-	ffmpegSetup();
+	// ffmpegSetup();
 
 	containCanvasInWrapper();
 
@@ -69,10 +69,10 @@ function setup() {
 }
 
 function draw() {
-	if (!isFfmpegInit && ffmpegWaiter < FR) {
-		ffmpegWaiter++;
-		return;
-	}
+	// if (!isFfmpegInit && ffmpegWaiter < FR) {
+	// 	ffmpegWaiter++;
+	// 	return;
+	// }
 	// if (!isPlaying) return;
 	if (keyIsDown('-')) frameCount--;
 	if (keyIsDown('=')) frameCount++;
