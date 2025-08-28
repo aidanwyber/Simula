@@ -16,43 +16,6 @@ function createGUI() {
 	gui.addTabs(appearanceTab, exportTab);
 
 	// ------------------------------ APPEARANCE ------------------------------
-	appearanceTab.addTitle(2, 'Dimensions', false);
-
-	appearanceTab.addController(
-		new ResolutionSelect(
-			appearanceTab,
-			'Presets:',
-			resolutionOptions,
-			0,
-			(controller, value) => {
-				const resBox = appearanceTab.getController(
-					'resolutionTextboxes'
-				);
-				if (resBox) resBox.setValueOnlyDisplay(pw, ph);
-				generator.setup();
-			}
-		)
-	);
-	appearanceTab.addController(
-		new ResolutionTextboxes(
-			appearanceTab,
-			pw,
-			ph,
-			(controller, value) => {
-				if (
-					value.w * value.h < sq(10000) &&
-					(value.w != pw || value.h != ph)
-				) {
-					generator.setup();
-				}
-			},
-			controller => {
-				controller.setValueOnlyDisplay(pw, ph);
-			}
-		)
-	);
-
-	appearanceTab.addDivider();
 
 	appearanceTab.addTitle(2, 'Visual system', false);
 
@@ -269,117 +232,7 @@ function createGUI() {
 
 	exportTab.addDivider();
 
-	exportTab.addTitle(2, 'As a LANG_VIDEO', false);
-
-	exportTab.addController(
-		new Slider(
-			exportTab,
-			'sliderSpeed',
-			'LANG_SPEED',
-			0.25,
-			2.5,
-			speed,
-			0.25,
-			(controller, value) => {
-				speed = value; //pow(2, value * 2);
-				controller.label.div.html(
-					lang.process(`LANG_SPEED: ${speed} x`, true)
-				);
-			}
-		),
-		(doAddToRandomizerAs = false)
-	);
-
-	exportTab.addController(
-		new Slider(
-			exportTab,
-			'sliderVidDuration',
-			'LANG_VID_DURATION',
-			1,
-			30,
-			round(duration),
-			1,
-			(controller, value) => {
-				setDuration(value);
-				controller.label.div.html(
-					lang.process(`LANG_VID_DURATION: ${value} s`, true)
-				);
-			}
-		),
-		(doAddToRandomizerAs = false)
-	);
-
-	// ffmpeg.js var
-	guiCaptureButtonMP4 = exportTab.addController(
-		new Button(
-			exportTab,
-			'buttonVidCaptureMP4',
-			lang.process('Start LANG_VID_CAPTURE MP4'),
-			controller => {
-				exportTabCaptureButtonChoice = exportTabCaptureButtonMP4;
-				ffmpegExportSettings = MP4;
-				if (!isCapturingFrames) {
-					startCapture();
-					controller.controllerElement.html(
-						lang.process('Stop LANG_VID_CAPTURE')
-					);
-				} else {
-					stopCapture();
-					controller.controllerElement.html(
-						lang.process('Start LANG_VID_CAPTURE')
-					);
-					clearFramesDir();
-					isPlaying = true;
-				}
-			},
-			controller => {
-				controller._doUpdateChangeSet = false;
-			}
-		)
-	);
-
-	// ffmpeg.js var
-	guiCaptureButtonMP4WEBM = exportTab.addController(
-		new Button(
-			exportTab,
-			'buttonVidCaptureWEBM',
-			lang.process('Start LANG_VID_CAPTURE (transparent WEBM)'),
-			controller => {
-				guiCaptureButtonChoice = guiCaptureButtonWEBM;
-				ffmpegExportSettings = WEBM_TRANSPARENT;
-				print(ffmpegExportSettings);
-				if (!isCapturingFrames) {
-					startCapture();
-					controller.controllerElement.html(
-						lang.process('Stop LANG_VID_CAPTURE (transparent WEBM)')
-					);
-				} else {
-					stopCapture();
-					controller.controllerElement.html(
-						lang.process(
-							'Start LANG_VID_CAPTURE (transparent WEBM)'
-						)
-					);
-					clearFramesDir();
-					isPlaying = true;
-				}
-			},
-			controller => {
-				controller._doUpdateChangeSet = false;
-			}
-		)
-	);
-
-	// ffmpeg.js var
-	guiVideoLoadingDiv = exportTab.addField(
-		new Field(exportTab.div, 'vidLoad', '', 'Video verwerken...')
-	);
-	guiVideoLoadingDiv.div.hide();
-	let loaderDiv = createDiv();
-	loaderDiv.parent(guiVideoLoadingDiv.div);
-
-	// ------------------------------ SETTINGS ------------------------------
-	exportTab.addTitle(2, 'Settings file', false);
+	exportTab.addTitle(2, 'As a settings file', false);
 
 	exportTab.addController(
 		new Button(
@@ -452,6 +305,9 @@ function createGUI() {
 	// gui.randomizer.randomize(); // initialize randomly
 
 	gui.setup();
+
+	resizeCanvas(1920, 1920);
+	containCanvasInWrapper();
 }
 
 const resolutionOptions = [
