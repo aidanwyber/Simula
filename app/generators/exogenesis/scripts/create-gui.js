@@ -17,21 +17,21 @@ function createGUI() {
 
 	// ------------------------------ APPEARANCE ------------------------------
 
-	appearanceTab.addTitle(2, 'Visual system', false);
+	// appearanceTab.addTitle(2, 'Visual system', false);
 
-	appearanceTab.addController(
-		new ColourBoxes(
-			appearanceTab,
-			'colourBoxesFgCol',
-			'LANG_FGCOL',
-			generator.palette,
-			0,
-			(controller, value) => {
-				generator.col = value;
-			}
-		),
-		(doAddToRandomizerAs = true)
-	);
+	// appearanceTab.addController(
+	// 	new ColourBoxes(
+	// 		appearanceTab,
+	// 		'colourBoxesFgCol',
+	// 		'LANG_FGCOL',
+	// 		generator.palette,
+	// 		0,
+	// 		(controller, value) => {
+	// 			generator.col = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
 
 	appearanceTab.addController(
 		new Button(
@@ -48,116 +48,116 @@ function createGUI() {
 		)
 	);
 
-	appearanceTab.addDivider();
+	// appearanceTab.addDivider();
 
-	appearanceTab.addTitle(2, 'LANG_IMAGE options', false);
+	// appearanceTab.addTitle(2, 'LANG_IMAGE options', false);
 
-	appearanceTab.addController(
-		new Toggle(
-			appearanceTab,
-			'toggleShowImage',
-			'LANG_HIDE LANG_IMAGE',
-			'LANG_SHOW LANG_IMAGE',
-			generator.doShowImage,
-			(controller, value) => {
-				generator.doShowImage = value;
-				appearanceTab
-					.getControllers(
-						'imageLoader0,sliderImageScale,xyImagePosition,sliderImageX,sliderImageY'.split(
-							','
-						)
-					)
-					.forEach(controller =>
-						generator.doShowImage
-							? controller.show()
-							: controller.hide()
-					);
-			}
-		),
-		(doAddToRandomizerAs = false)
-	);
+	// appearanceTab.addController(
+	// 	new Toggle(
+	// 		appearanceTab,
+	// 		'toggleShowImage',
+	// 		'LANG_HIDE LANG_IMAGE',
+	// 		'LANG_SHOW LANG_IMAGE',
+	// 		generator.doShowImage,
+	// 		(controller, value) => {
+	// 			generator.doShowImage = value;
+	// 			appearanceTab
+	// 				.getControllers(
+	// 					'imageLoader0,sliderImageScale,xyImagePosition,sliderImageX,sliderImageY'.split(
+	// 						','
+	// 					)
+	// 				)
+	// 				.forEach(controller =>
+	// 					generator.doShowImage
+	// 						? controller.show()
+	// 						: controller.hide()
+	// 				);
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = false)
+	// );
 
-	appearanceTab.addController(
-		new ImageLoader(
-			appearanceTab,
-			'imageLoader0',
-			'LANG_SELECT LANG_IMAGE...',
-			(controller, img) => {
-				if (img instanceof p5.Image && img.isLoaded) return;
-				if (img instanceof p5.Element && img.isLoaded) {
-					// check if img isn't default image
-					img.elt.onload();
-					return;
-				}
-				print('Loading image...');
-				img.elt.onload = () => {
-					img.isLoaded = true;
-					print('Image loaded.');
-					const minW = floor(pw / (1 + maxImgResIncrease));
-					const minH = floor(ph / (1 + maxImgResIncrease));
-					if (img.width < minW || img.height < minH) {
-						controller.setWarning(
-							lang.process(
-								'LANG_TOO_SMALL_IMG'.format(minW, minH)
-							)
-						);
-						dialog.alert(
-							lang.process(
-								'LANG_TOO_SMALL_IMG_ALERT'.format(
-									img.width,
-									img.height,
-									minW,
-									minH
-								)
-							)
-						);
-					} else {
-						controller.setConsole(controller.fileName, '');
-					}
-					generator.img = img;
-					appearanceTab
-						.getController('toggleShowImage')
-						.setValue(true);
-				};
-			}
-		)
-	);
+	// appearanceTab.addController(
+	// 	new ImageLoader(
+	// 		appearanceTab,
+	// 		'imageLoader0',
+	// 		'LANG_SELECT LANG_IMAGE...',
+	// 		(controller, img) => {
+	// 			if (img instanceof p5.Image && img.isLoaded) return;
+	// 			if (img instanceof p5.Element && img.isLoaded) {
+	// 				// check if img isn't default image
+	// 				img.elt.onload();
+	// 				return;
+	// 			}
+	// 			print('Loading image...');
+	// 			img.elt.onload = () => {
+	// 				img.isLoaded = true;
+	// 				print('Image loaded.');
+	// 				const minW = floor(pw / (1 + maxImgResIncrease));
+	// 				const minH = floor(ph / (1 + maxImgResIncrease));
+	// 				if (img.width < minW || img.height < minH) {
+	// 					controller.setWarning(
+	// 						lang.process(
+	// 							'LANG_TOO_SMALL_IMG'.format(minW, minH)
+	// 						)
+	// 					);
+	// 					dialog.alert(
+	// 						lang.process(
+	// 							'LANG_TOO_SMALL_IMG_ALERT'.format(
+	// 								img.width,
+	// 								img.height,
+	// 								minW,
+	// 								minH
+	// 							)
+	// 						)
+	// 					);
+	// 				} else {
+	// 					controller.setConsole(controller.fileName, '');
+	// 				}
+	// 				generator.img = img;
+	// 				appearanceTab
+	// 					.getController('toggleShowImage')
+	// 					.setValue(true);
+	// 			};
+	// 		}
+	// 	)
+	// );
 
-	appearanceTab.addController(
-		new Slider(
-			appearanceTab,
-			'sliderImageScale',
-			'LANG_SCALE LANG_IMAGE',
-			-1,
-			1,
-			log(generator.imageScale) / log(2),
-			0.05,
-			(controller, value) => {
-				generator.imageScale = pow(2, value);
-			}
-		),
-		(doAddToRandomizerAs = false)
-	);
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderImageScale',
+	// 		'LANG_SCALE LANG_IMAGE',
+	// 		-1,
+	// 		1,
+	// 		log(generator.imageScale) / log(2),
+	// 		0.05,
+	// 		(controller, value) => {
+	// 			generator.imageScale = pow(2, value);
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = false)
+	// );
 
-	appearanceTab.addController(
-		new XYSlider(
-			appearanceTab,
-			'xyImagePosition',
-			'LANG_IMAGE_POSITION',
-			-1,
-			1,
-			0,
-			0.001,
-			-1,
-			1,
-			0,
-			0.001,
-			(controller, value) => {
-				generator.imagePosition.set(value.x, value.y);
-			}
-		),
-		(doAddToRandomizerAs = false)
-	);
+	// appearanceTab.addController(
+	// 	new XYSlider(
+	// 		appearanceTab,
+	// 		'xyImagePosition',
+	// 		'LANG_IMAGE_POSITION',
+	// 		-1,
+	// 		1,
+	// 		0,
+	// 		0.001,
+	// 		-1,
+	// 		1,
+	// 		0,
+	// 		0.001,
+	// 		(controller, value) => {
+	// 			generator.imagePosition.set(value.x, value.y);
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = false)
+	// );
 
 	// ------------------------------ EXPORT ------------------------------
 	exportTab.addTitle(2, 'As an LANG_IMAGE', false);
