@@ -34,38 +34,6 @@ function createGUI() {
 	);
 
 	appearanceTab.addController(
-		new Slider(
-			appearanceTab,
-			'sliderLogoScale',
-			'LANG_SCALE logo',
-			-1,
-			1,
-			log(generator.logoScale) / log(2),
-			0.05,
-			(controller, value) => {
-				generator.logoScale = pow(2, value);
-			}
-		),
-		(doAddToRandomizerAs = false)
-	);
-
-	appearanceTab.addController(
-		new Slider(
-			appearanceTab,
-			'sliderLogoScale',
-			'LANG_SCALE cat',
-			-1,
-			1,
-			log(generator.cat.scaleAll) / log(2),
-			0.05,
-			(controller, value) => {
-				generator.cat.scaleAll = pow(2, value);
-			}
-		),
-		(doAddToRandomizerAs = false)
-	);
-
-	appearanceTab.addController(
 		new Button(
 			appearanceTab,
 			'buttonRandomize',

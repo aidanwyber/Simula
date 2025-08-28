@@ -10,10 +10,7 @@ class Generator {
 		this.col = undefined;
 
 		this.doShowImage = true;
-		this.img = loadImage(
-			'demo/assets/felix.jpg',
-			img => (img.isLoaded = true)
-		);
+		this.img = undefined;
 		this.imageScale = 1;
 		this.imagePosition = new Vec2D(0, 0);
 	}
