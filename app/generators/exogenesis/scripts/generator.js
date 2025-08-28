@@ -1,52 +1,51 @@
 class Generator {
-	static name = 'p5Catalyst Demo';
-	static supportEmail = 'aidan.wyber@multitude.nl';
+	static name = 'Tattoo Creator';
+	static supportEmail = 'aidanwyber@gmail.nl';
 
-	palette = [color('#F2EDEB'), color('#120D09'), color('#DDA702')];
-	white = this.palette.at(0);
+	// palette = [color('#F2EDEB'), color('#120D09'), color('#DDA702')];
+	// white = this.palette.at(0);
 
-	// ------------------------------------------------------------ CONSTRUCTOR
-	constructor() {
-		this.col = undefined;
+	constructor() {}
 
-		this.doShowImage = true;
-		this.img = undefined;
-		this.imageScale = 1;
-		this.imagePosition = new Vec2D(0, 0);
-	}
-
-	// ------------------------------------------------------------ SETUP
 	setup() {}
 
-	// ------------------------------------------------------------ UPDATE
 	update() {
-		const minWH = min(width, height);
+		// const minWH = min(width, height);
 	}
 
-	// ------------------------------------------------------------ DRAW
 	draw(doSVGToo = false) {
 		this.doSVGToo = doSVGToo;
 		clear();
-		if (theShader !== undefined) this.drawShader();
-
-		if (this.doShowImage) this.drawImg();
 
 		this.update();
+
+		this.drawBuffer();
+		this.drawShader();
 	}
 
-	drawImg() {
-		if (this.img === undefined) return;
-		imageCenteredXYScale(
-			this.img,
-			true,
-			this.imagePosition.x,
-			this.imagePosition.y,
-			this.imageScale
-		);
+	drawBuffer() {
+		bufferShader.setUniform('resolution', [width, height]);
+		bufferShader.setUniform('progress', progress);
+		bufferShader.setUniform('time', time);
+		bufferShader.setUniform('mouse', [
+			mouseX,
+			mouseY,
+			mouseIsPressed ? 1.0 : 0.0,
+		]);
+		bufferShader.setUniform('SSIDHash', SSID / 1e8);
+		bufferShader.setUniform('utilBools', utilBools);
+
+		bufferPG.resetMatrix();
+		bufferPG.shader(theShader);
+		bufferPG.rectMode(CENTER);
+		bufferPG.noStroke();
+		bufferPG.blendMode(BLEND);
+		bufferPG.rect(0, 0, width, height);
 	}
 
-	// ------------------------------------------------------------ SHADER
 	drawShader() {
+		theShader.setUniform('buffer', bufferPG);
+
 		theShader.setUniform('resolution', [width, height]);
 		theShader.setUniform('progress', progress);
 		theShader.setUniform('time', time);
@@ -59,21 +58,17 @@ class Generator {
 		theShader.setUniform('utilBools', utilBools);
 
 		resetMatrix();
-		push();
-		{
-			resetMatrix();
-			shader(theShader);
-			rectMode(CENTER);
-			noStroke();
-			blendMode(BLEND);
-			rect(0, 0, width, height);
-		}
-		pop();
+		shader(theShader);
+		rectMode(CENTER);
+		noStroke();
+		blendMode(BLEND);
+		rect(0, 0, width, height);
+
+		resetMatrix();
 		// ensures 0–width and 0–height range in WEBGL mode
 		translate(-width / 2, -height / 2);
 	}
 
-	// ------------------------------------------------------------ UTILITY
 	getState() {
 		return {
 			...this,

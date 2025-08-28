@@ -35,8 +35,17 @@ let generator;
 /** @type {GUIForP5} */
 let gui;
 
+let bufferShader, bufferPG;
+
 function preload() {
-	// theShader = loadShader('scripts/shader/shader.vert', 'scripts/shader/shader.frag');
+	bufferShader = loadShader(
+		'scripts/shader/shader.vert',
+		'scripts/shader/buffer.frag'
+	);
+	theShader = loadShader(
+		'scripts/shader/shader.vert',
+		'scripts/shader/shader.frag'
+	);
 }
 
 function setup() {
@@ -46,6 +55,7 @@ function setup() {
 		theShader === undefined
 			? createCanvas(1, 1)
 			: createCanvas(1, 1, WEBGL);
+	bufferPG = createGraphics(1, 1, WEBGL);
 	// svgCanvas = new p5(theSvgCanvasSketch);
 	createCanvasWrapper();
 
@@ -110,6 +120,10 @@ function resize(w, h) {
 	print(`Resizing to: ${w} x ${h}...`);
 	pixelDensity(1);
 	resizeCanvas(pw, ph);
+
+	bufferPG.pixelDensity(1);
+	bufferPG.resizeCanvas(pw, ph);
+
 	// generator.pg.pixelDensity(1);
 	// generator.pg.resizeCanvas(pw, ph);
 	if (svgCanvas) {
