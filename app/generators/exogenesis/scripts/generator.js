@@ -7,23 +7,36 @@ class Generator {
 
 	constructor() {}
 
-	setup() {}
+	setup() {
+		resize(1920, 1920);
+		containCanvasInWrapper();
+	}
 
 	update() {
 		// const minWH = min(width, height);
 	}
 
 	draw(doSVGToo = false) {
+		if (!isPlaying) return;
+
 		this.doSVGToo = doSVGToo;
 		clear();
 
 		this.update();
 
 		this.drawBuffer();
-		this.drawShader();
+
+		if (false) {
+			imageMode(CENTER);
+			image(bufferPG, 0, 0);
+		} else {
+			this.drawShader();
+		}
 	}
 
 	drawBuffer() {
+		theShader.setUniform('buffer', bufferPG);
+
 		bufferShader.setUniform('resolution', [width, height]);
 		bufferShader.setUniform('progress', progress);
 		bufferShader.setUniform('time', time);
@@ -36,7 +49,7 @@ class Generator {
 		bufferShader.setUniform('utilBools', utilBools);
 
 		bufferPG.resetMatrix();
-		bufferPG.shader(theShader);
+		bufferPG.shader(bufferShader);
 		bufferPG.rectMode(CENTER);
 		bufferPG.noStroke();
 		bufferPG.blendMode(BLEND);

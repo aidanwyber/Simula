@@ -39,11 +39,11 @@ let bufferShader, bufferPG;
 
 function preload() {
 	bufferShader = loadShader(
-		'scripts/shader/shader.vert',
+		'scripts/shader/frag.vert',
 		'scripts/shader/buffer.frag'
 	);
 	theShader = loadShader(
-		'scripts/shader/shader.vert',
+		'scripts/shader/frag.vert',
 		'scripts/shader/shader.frag'
 	);
 }

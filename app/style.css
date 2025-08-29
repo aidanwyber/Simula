@@ -203,13 +203,13 @@ body:where(.dark-mode) {
 
 /********************************* LOGO STYLING *********************************/
 #logo {
-	min-height: 5rem;
-	background-image: url('assets/generator-logo.svg');
+	min-height: 6rem;
+	background-image: url(assets/generator-logo.svg);
 	background-position-x: center;
 	background-position-y: center;
 	background-size: contain;
 	background-repeat: no-repeat;
-	/* margin-bottom: 0.5rem; */
+	margin-bottom: -0.5rem;
 }
 
 body:where(.dark-mode) #logo {

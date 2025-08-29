@@ -273,9 +273,6 @@ function createGUI() {
 	// gui.randomizer.randomize(); // initialize randomly
 
 	gui.setup();
-
-	resizeCanvas(1920, 1920);
-	containCanvasInWrapper();
 }
 
 const resolutionOptions = [

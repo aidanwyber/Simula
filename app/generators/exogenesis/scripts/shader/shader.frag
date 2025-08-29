@@ -22,12 +22,28 @@ uniform float SSIDHash;
 uniform bool utilBools[10];
 
 // ---------------------------------------------------------------- MAIN
-void main() {
-	// vec2 uv = vTexCoord.xy;
-	vec2 uv = gl_FragCoord.xy / resolution;
-	// vec2 mouseUV = mouse.xy / resolution;
 
-	vec3 col = texture2D(buffer, uv).rgb;
+#define BG vec3(1.)
+#define FG vec3(0.)
+
+void main() {
+	vec2 uv = gl_FragCoord.xy / resolution;
+
+	if (mouse.z == 1. || true) {
+		gl_FragColor = texture2D(buffer, uv);
+		return;
+	}
+
+	vec2 xy = texture2D(buffer, uv).xy;
+	float v = xy.x - xy.y;
+	v = v * 0.5 + 0.5;
+
+	float threshold = 0.5;
+
+	float eps = 0.05;
+	v = smoothstep(threshold - eps, threshold + eps, v);
+
+	vec3 col = mix(BG, FG, v);
 
 	gl_FragColor = vec4(col, 1.);
 }
