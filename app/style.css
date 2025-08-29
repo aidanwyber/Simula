@@ -1,7 +1,12 @@
 /********************************* FONTS *********************************/
+@font-face {
+	font-family: SpaceGroteskVariable;
+	src: url('assets/SpaceGrotesk-VariableFont_wght.ttf');
+}
+
 * {
 	font-size: 1rem;
-	font-family: InterVariable, Inter, sans-serif;
+	font-family: SpaceGroteskVariable, Arial, sans-serif;
 	font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
 	font-variant-alternates: styleset(open-digits)
 		character-variant(
@@ -18,7 +23,7 @@
 }
 @supports (font-variation-settings: normal) {
 	* {
-		font-family: InterVariable, sans-serif;
+		font-family: SpaceGroteskVariable, Arial, sans-serif;
 	}
 }
 button {
