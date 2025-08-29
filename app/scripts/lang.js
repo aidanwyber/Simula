@@ -261,7 +261,6 @@ class Lang {
 	 * @see availableLangKeys
 	 */
 	setup(langKey) {
-		this.langKey = langKey;
 		this.langKey = Lang.getURLLangKey() || langKey;
 	}
 
@@ -318,4 +317,4 @@ class Lang {
  * Global instance of {@link Lang} used throughout the GUI for translations.
  * @type {Lang}
  */
-const lang = new Lang();
+const lang = new Lang(language);

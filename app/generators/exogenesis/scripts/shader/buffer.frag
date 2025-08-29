@@ -21,6 +21,12 @@ uniform sampler2D buffer;
 uniform float SSIDHash;
 uniform bool utilBools[10];
 
+uniform float rotation;
+uniform float displacementAngle;
+uniform float displacementDistance;
+uniform bool doMirrorX;
+uniform bool doMirrorY;
+
 #define nmc(x) (0.5 - 0.5 * cos(x))
 
 float dot2(vec2 v) {
@@ -41,28 +47,52 @@ vec2 qq(in vec2 dir, in vec2 q) {
     return dir *
         mix(0.5, 1.5, max(0., dot(normalize(dir), q)));
 }
-vec2 laplacian(in vec2 uv, in vec2 px, in vec2 q, in vec2 curr) {
-    const vec3 dir = vec3(1., -1., 0.);
-    return 0.25 * mix(( // horizontal-vertical cross
-    texture2D(buffer, uv + px * qq(dir.xx, q)).xy +
-        texture2D(buffer, uv + px * qq(dir.xy, q)).xy +
-        texture2D(buffer, uv + px * qq(dir.yy, q)).xy +
-        texture2D(buffer, uv + px * qq(dir.yx, q)).xy), ( // corners
-    texture2D(buffer, uv + px * qq(dir.zx, q)).xy +
-        texture2D(buffer, uv + px * qq(dir.zy, q)).xy +
-        texture2D(buffer, uv + px * qq(dir.xz, q)).xy +
-        texture2D(buffer, uv + px * qq(dir.yz, q)).xy), 0.2 // 0.8 to cross, 0.2 to corners
-    ) - curr;
+
+vec2 flipUv(in vec2 uv) {
+    return uv * vec2(1., -1.) + vec2(0., 1.);
 }
 
-vec3 computeCol(in vec2 uv, in vec2 pos) {
+vec2 laplacian(in vec2 uv, in vec2 px, in vec2 q, in vec2 curr) {
+    const vec3 dir = vec3(1., -1., 0.);
+    return 0.25 * mix(( 
+    // horizontal-vertical cross
+    texture2D(buffer, flipUv(uv + px * qq(dir.xx, q))).xy +
+        texture2D(buffer, flipUv(uv + px * qq(dir.xy, q))).xy +
+        texture2D(buffer, flipUv(uv + px * qq(dir.yy, q))).xy +
+        texture2D(buffer, flipUv(uv + px * qq(dir.yx, q))).xy), ( 
+    // corners
+    texture2D(buffer, flipUv(uv + px * qq(dir.zx, q))).xy +
+        texture2D(buffer, flipUv(uv + px * qq(dir.zy, q))).xy +
+        texture2D(buffer, flipUv(uv + px * qq(dir.xz, q))).xy +
+        texture2D(buffer, flipUv(uv + px * qq(dir.yz, q))).xy),
+    // 0.8 to cross, 0.2 to corners
+    0.2) - curr;
+}
+
+vec3 computeCol(in vec2 uv, in vec2 pos, in vec2 mousePos) {
     vec2 px = 1. / resolution;
+
+    if (time < 0.1) {
+        return vec3(1.);
+    }
 
     //uv.x = uv.x >= 0.5 ? 1. - uv.x : uv.x; // mirror
 
-    vec2 curr = uv;// texture2D(buffer, uv).xy;
+    vec2 curr = texture2D(buffer, flipUv(uv)).xy;
 
-    pos *= 3.;
+    vec2 origPos = pos;
+    pos *= 5.;
+
+    // Apply mirroring
+    if (doMirrorX)
+        pos.x = abs(pos.x);
+    if (doMirrorY)
+        pos.y = abs(pos.y);
+
+    // Apply rotation
+    float c = cos(rotation);
+    float s = sin(rotation);
+    pos = mat2(c, -s, s, c) * pos;
 
     //vec2 posDir = (cos(pos * PI * 8. + time)) * mat2(0,-1,1,0);
     vec2 q = vec2(0., 0.);//normalize(posDir);
@@ -72,7 +102,8 @@ vec3 computeCol(in vec2 uv, in vec2 pos) {
 
     float len = 6.;
 
-    vec2 dpos = 1. * cos(pos * TAU + time * 0.1) * 0.2;
+    // Changed phaseAngle to displacementAngle and added displacement distance
+    vec2 dpos = displacementDistance * sin(pos * TAU + displacementAngle) * 0.2;
     vec3 sdg = sdgSegment((pos + dpos).yx, vec2(0., -len * 0.5), vec2(0., len * 0.5), 0.);
 
     float sd = sdg.x;
@@ -104,9 +135,10 @@ vec3 computeCol(in vec2 uv, in vec2 pos) {
 
     vec2 new = curr + delta * 0.1;
 
+    // if (mouse.z > 0. && distance(mousePos, origPos) < 0.1)
+    //     new = vec2(1., 1.);
     if (mouse.z > 0.)
-        // new = vec2(1., 1.);
-        new += vec2(1.) * 0.01 / (dot2(uv - mouse.xy / resolution));
+        new += exp(-distance(mousePos, origPos) * 50.);
 
     new = clamp(new, 0., 1.);
 
@@ -120,5 +152,6 @@ void main() {
     // vec2 uv = vTexCoord.xy;
     vec2 uv = gl_FragCoord.xy / resolution;
     vec2 pos = (gl_FragCoord.xy - resolution * 0.5) / resolution * 2.;
-    gl_FragColor = vec4(computeCol(uv, pos), 1.);
+    vec2 mousePos = (mouse.xy - resolution * 0.5) / resolution * 2.;
+    gl_FragColor = vec4(computeCol(uv, pos, mousePos), 1.);
 }

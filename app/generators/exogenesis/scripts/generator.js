@@ -5,10 +5,18 @@ class Generator {
 	// palette = [color('#F2EDEB'), color('#120D09'), color('#DDA702')];
 	// white = this.palette.at(0);
 
-	constructor() {}
+	constructor() {
+		this.threshold = 0.37;
+		this.displacementDistance = 0.5;
+		this.displacementAngle = PI;
+		this.rayEasing = 0.5;
+		this.rotation = 0.0;
+		this.doMirrorX = false;
+		this.doMirrorY = false;
+	}
 
 	setup() {
-		resize(1920, 1920);
+		resize(1080, 1080);
 		containCanvasInWrapper();
 	}
 
@@ -35,7 +43,16 @@ class Generator {
 	}
 
 	drawBuffer() {
-		theShader.setUniform('buffer', bufferPG);
+		bufferShader.setUniform('buffer', bufferPG);
+		bufferShader.setUniform(
+			'displacementDistance',
+			this.displacementDistance
+		);
+		bufferShader.setUniform('displacementAngle', this.displacementAngle);
+		bufferShader.setUniform('rayEasing', this.rayEasing);
+		bufferShader.setUniform('rotation', this.rotation);
+		bufferShader.setUniform('doMirrorX', this.doMirrorX);
+		bufferShader.setUniform('doMirrorY', this.doMirrorY);
 
 		bufferShader.setUniform('resolution', [width, height]);
 		bufferShader.setUniform('progress', progress);
@@ -43,7 +60,7 @@ class Generator {
 		bufferShader.setUniform('mouse', [
 			mouseX,
 			mouseY,
-			mouseIsPressed ? 1.0 : 0.0,
+			mouseIsPressed && isInCanvas({ x: mouseX, y: mouseY }) ? 1.0 : 0.0,
 		]);
 		bufferShader.setUniform('SSIDHash', SSID / 1e8);
 		bufferShader.setUniform('utilBools', utilBools);
@@ -58,6 +75,8 @@ class Generator {
 
 	drawShader() {
 		theShader.setUniform('buffer', bufferPG);
+		theShader.setUniform('eps', 0.05);
+		theShader.setUniform('threshold', this.threshold);
 
 		theShader.setUniform('resolution', [width, height]);
 		theShader.setUniform('progress', progress);

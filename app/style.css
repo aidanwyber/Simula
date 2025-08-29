@@ -208,7 +208,7 @@ body:where(.dark-mode) {
 
 /********************************* LOGO STYLING *********************************/
 #logo {
-	min-height: 6rem;
+	min-height: 3rem;
 	background-image: url(assets/generator-logo.svg);
 	background-position-x: center;
 	background-position-y: center;
@@ -1214,11 +1214,15 @@ body:where(.dark-mode) .die-icon--6 {
 
 /********************************* CANVAS SECTION *********************************/
 #canvas-workarea {
-	background-color: var(--transpSquareCol0);
+	background-color: var(--base-col);
 	display: flex;
 	flex-direction: row;
 	width: 100%;
 	padding: 1em;
+}
+
+#canvas-workarea:where(.dark-mode) {
+	background-color: var(--base-col);
 }
 
 main {
@@ -1251,7 +1255,14 @@ canvas,
 		calc(var(--squareSize) / -2) 0px;
 	background-repeat: repeat;
 
-	cursor: crosshair;
+	cursor: pointer;
+
+	mix-blend-mode: screen;
+}
+
+body:where(.dark-mode) canvas,
+body:where(.dark-mode) .p5Canvas > svg {
+	mix-blend-mode: multiply;
 }
 
 .p5Canvas > svg {

@@ -17,22 +17,7 @@ function createGUI() {
 
 	// ------------------------------ APPEARANCE ------------------------------
 
-	// appearanceTab.addTitle(2, 'Visual system', false);
-
-	// appearanceTab.addController(
-	// 	new ColourBoxes(
-	// 		appearanceTab,
-	// 		'colourBoxesFgCol',
-	// 		'LANG_FGCOL',
-	// 		generator.palette,
-	// 		0,
-	// 		(controller, value) => {
-	// 			generator.col = value;
-	// 		}
-	// 	),
-	// 	(doAddToRandomizerAs = true)
-	// );
-
+	// randomize
 	appearanceTab.addController(
 		new Button(
 			appearanceTab,
@@ -46,6 +31,120 @@ function createGUI() {
 				// controller.click(); // randomize on startup
 			}
 		)
+	);
+
+	appearanceTab.addDivider();
+
+	appearanceTab.addTitle(2, 'Pattern', false);
+
+	appearanceTab.addController(
+		new Slider(
+			appearanceTab,
+			'sliderDisplacementDistance',
+			'Displacement distance',
+			0,
+			1,
+			generator.displacementDistance,
+			0.001,
+			(controller, value) => {
+				generator.displacementDistance = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+	appearanceTab.addController(
+		new Slider(
+			appearanceTab,
+			'sliderDisplacementAngle',
+			'Displacement angle',
+			0,
+			TAU,
+			generator.displacementAngle,
+			0.001,
+			(controller, value) => {
+				generator.displacementAngle = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+
+	appearanceTab.addController(
+		new Slider(
+			appearanceTab,
+			'sliderRotation',
+			'Rotation',
+			0,
+			TAU,
+			generator.rotation,
+			0.001,
+			(controller, value) => {
+				generator.rotation = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+
+	appearanceTab.addController(
+		new Toggle(
+			appearanceTab,
+			'toggleMirrorX',
+			'Free X-axis',
+			'Mirrored X-axis',
+			generator.doMirrorX,
+			(controller, value) => {
+				generator.doMirrorX = !value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+	appearanceTab.addController(
+		new Toggle(
+			appearanceTab,
+			'toggleMirrorY',
+			'Free Y-axis',
+			'Mirrored Y-axis',
+			generator.doMirrorY,
+			(controller, value) => {
+				generator.doMirrorY = !value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+
+	appearanceTab.addController(
+		new Slider(
+			appearanceTab,
+			'sliderRayEasing',
+			'Ray warping',
+			0,
+			1,
+			generator.rayEasing,
+			0.001,
+			(controller, value) => {
+				generator.rayEasing = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+
+	appearanceTab.addDivider();
+
+	appearanceTab.addTitle(2, 'View', false);
+
+	appearanceTab.addController(
+		new Slider(
+			appearanceTab,
+			'sliderThreshold',
+			'Threshold',
+			0.215,
+			0.883,
+			generator.threshold,
+			0.001,
+			(controller, value) => {
+				generator.threshold = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
 	);
 
 	// appearanceTab.addDivider();
@@ -268,7 +367,8 @@ function createGUI() {
 
 	gui.createP5CatalystLogo();
 
-	gui.createDarkModeButton();
+	// gui.createDarkModeButton();
+	gui.setDarkMode();
 
 	// gui.randomizer.randomize(); // initialize randomly
 

@@ -21,6 +21,9 @@ uniform sampler2D buffer;
 uniform float SSIDHash;
 uniform bool utilBools[10];
 
+uniform float threshold;
+uniform float eps;
+
 // ---------------------------------------------------------------- MAIN
 
 #define BG vec3(1.)
@@ -29,18 +32,15 @@ uniform bool utilBools[10];
 void main() {
 	vec2 uv = gl_FragCoord.xy / resolution;
 
-	if (mouse.z == 1. || true) {
-		gl_FragColor = texture2D(buffer, uv);
-		return;
-	}
+	// if (mouse.z == 1.) {
+	// 	gl_FragColor = texture2D(buffer, uv);
+	// 	return;
+	// }
 
 	vec2 xy = texture2D(buffer, uv).xy;
 	float v = xy.x - xy.y;
 	v = v * 0.5 + 0.5;
 
-	float threshold = 0.5;
-
-	float eps = 0.05;
 	v = smoothstep(threshold - eps, threshold + eps, v);
 
 	vec3 col = mix(BG, FG, v);
