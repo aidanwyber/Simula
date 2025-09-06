@@ -10,6 +10,9 @@ function createGUI() {
 	// title.div.style.fontSize = '1.5rem';
 	// title.div.style.marginTop = '-1em';
 
+	gui.addTitle(1, Generator.name, true).div.elt.children[0].style.fontSize =
+		'1.7rem';
+
 	const appearanceTab = new Tab('Appearance');
 	const exportTab = new Tab('Export');
 
@@ -36,6 +39,36 @@ function createGUI() {
 	appearanceTab.addDivider();
 
 	appearanceTab.addTitle(2, 'Pattern', false);
+
+	appearanceTab.addController(
+		new Select(
+			gui,
+			'selectShape',
+			'Shape',
+			generator.shapes,
+			0,
+			(controller, value) => {
+				generator.shape = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+
+	appearanceTab.addController(
+		new Slider(
+			appearanceTab,
+			'sliderShapeLen',
+			'Shape size',
+			2,
+			12,
+			generator.shapeLen,
+			0.1,
+			(controller, value) => {
+				generator.shapeLen = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
 
 	appearanceTab.addController(
 		new Slider(
@@ -73,12 +106,12 @@ function createGUI() {
 			appearanceTab,
 			'sliderRotation',
 			'Rotation',
-			0,
-			TAU,
-			generator.rotation,
-			0.001,
+			-0.5,
+			0.5,
+			generator.rotation / TAU,
+			1 / 24,
 			(controller, value) => {
-				generator.rotation = value;
+				generator.rotation = value * TAU;
 			}
 		),
 		(doAddToRandomizerAs = true)
@@ -92,7 +125,7 @@ function createGUI() {
 			'Mirrored X-axis',
 			generator.doMirrorX,
 			(controller, value) => {
-				generator.doMirrorX = !value;
+				generator.doMirrorX = value;
 			}
 		),
 		(doAddToRandomizerAs = true)
@@ -105,7 +138,7 @@ function createGUI() {
 			'Mirrored Y-axis',
 			generator.doMirrorY,
 			(controller, value) => {
-				generator.doMirrorY = !value;
+				generator.doMirrorY = value;
 			}
 		),
 		(doAddToRandomizerAs = true)
@@ -114,14 +147,46 @@ function createGUI() {
 	appearanceTab.addController(
 		new Slider(
 			appearanceTab,
-			'sliderRayEasing',
-			'Ray warping',
+			'sliderRaySpreading',
+			'Ray spread',
 			0,
 			1,
-			generator.rayEasing,
+			generator.raySpreading,
 			0.001,
 			(controller, value) => {
-				generator.rayEasing = value;
+				generator.raySpreading = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+
+	appearanceTab.addController(
+		new Slider(
+			appearanceTab,
+			'sliderRayCount',
+			'Ray count',
+			3,
+			16,
+			generator.rayCount,
+			0.5,
+			(controller, value) => {
+				generator.rayCount = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+
+	appearanceTab.addController(
+		new Slider(
+			appearanceTab,
+			'sliderRayBreaks',
+			'Ray breaks',
+			1,
+			4,
+			generator.rayBreaks,
+			0.5,
+			(controller, value) => {
+				generator.rayBreaks = value;
 			}
 		),
 		(doAddToRandomizerAs = true)
@@ -429,6 +494,23 @@ const resolutionOptions = [
 	getAPaperResolutionOptionAtDpi(1, 300, false),
 	getAPaperResolutionOptionAtDpi(0, 300, false),
 ];
+
+function getAPaperResolutionOptionAtDpi(aNumber, dpi, isPortrait = true) {
+	// A0 paper size in mm
+	const baseWidth = 841;
+	const baseHeight = 1189;
+	const factor = Math.pow(2, aNumber / 2);
+	const wMm = Math.floor(baseWidth / factor);
+	const hMm = Math.floor(baseHeight / factor);
+	const wPx = Math.round((wMm / 25.4) * dpi);
+	const hPx = Math.round((hMm / 25.4) * dpi);
+	return (
+		`A${aNumber} ${
+			isPortrait ? 'LANG_PORTRAIT' : 'LANG_LANDSCAPE'
+		} @ ${dpi} DPI: ` +
+		`${isPortrait ? wPx : hPx} x ${isPortrait ? hPx : wPx}`
+	);
+}
 
 function getAPaperResolutionOptionAtDpi(aNumber, dpi, isPortrait = true) {
 	// A0 paper size in mm
