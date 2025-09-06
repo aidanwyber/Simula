@@ -144,6 +144,38 @@ const dictionary = {
 		nl: 'Kleiner dan minimum afmetingen: {0} x {1} pixels.',
 		en: 'Smaller than minimum dimensions: {0} x {1} pixels.',
 	},
+	LANG_HELPME_MSG_EXOGENESIS: {
+		nl:
+			`<h1>Exogenesis</h1>` +
+			`<p>Maak je eigen alienesque tattoo door de regelaars te verstellen en zwaai je muis door het beeld` +
+			`om de visual te updaten. DM me op Instagram for tips & tricks en voor-gegeneerde flash (@aidan.wyber).</p>` +
+			`<h2>Gebruik</h2>` +
+			`<div class="helpme">` +
+			`<ul>` +
+			`<li><span>Ongedaan maken</span> <span><code>CTRL / CMD</code> + <code>Z</code></span></li>` +
+			`<li><span>Opnieuw</span> <span><code>CTRL / CMD</code> + <code>SHIFT</code> + <code>Z</code></span></li>` +
+			`<li><span>Volledig scherm</span> <span><code>F</code></span></li>` +
+			// `<li><span>Zijbalk verspringen</span> <span><code>B</code></span></li>` +
+			// `<li><span>Wissel tussen licht/donker thema</span> <span><code>M</code></span></li>` +
+			`<li><span>Laat deze popup zien</span> <span><code>H</code></span></li>` +
+			`</ul>` +
+			`</div>`,
+		en:
+			`<h1>Exogenesis</h1>` +
+			`<p>Create your own alienesque tattoo by adjusting the controls and drag your mosue around to update` +
+			`the visual. DM me on Instagram for tips, tricks and pre-generated flash (@aidan.wyber).</p>` +
+			`<h2>Usage</h2>` +
+			`<div class="helpme">` +
+			`<ul>` +
+			`<li><span>Undo</span> <span><code>CTRL / CMD</code> + <code>Z</code></span></li>` +
+			`<li><span>Redo</span> <span><code>CTRL / CMD</code> + <code>SHIFT</code> + <code>Z</code></span></li>` +
+			`<li><span>Toggle fullscreen</span> <span><code>F</code></span></li>` +
+			// `<li><span>Flip sidebar</span> <span><code>B</code></span></li>` +
+			// `<li><span>Toggle light/dark mode</span> <span><code>M</code></span></li>` +
+			`<li><span>Show this popup</span> <span><code>H</code></span></li>` +
+			`</ul>` +
+			`</div>`,
+	},
 	LANG_HELPME_MSG: {
 		nl:
 			`<h1>Help</h1>` +
@@ -274,7 +306,7 @@ class Lang {
 	 * @see lang
 	 */
 	process(str, doCapitalizeFirstLetter = false, depth = 10) {
-		// recursively replace all hotStrings in str with their translations
+		// recursively replace all h	otStrings in str with their translations
 		let replaced = str;
 		for (let hotString in dictionary) {
 			const translation = dictionary[hotString][this.langKey];

@@ -111,6 +111,10 @@ class Generator {
 		translate(-width / 2, -height / 2);
 	}
 
+	helpMe() {
+		dialog.alert(lang.process(`LANG_HELPME_MSG_EXOGENESIS`, true));
+	}
+
 	getState() {
 		return {
 			...this,

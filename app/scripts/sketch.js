@@ -74,7 +74,7 @@ function setup() {
 	generator.setup();
 
 	if (window.location.hostname !== 'localhost') {
-		setTimeout(helpMe, 500);
+		setTimeout(generator.helpMe, 500);
 	}
 }
 
@@ -104,10 +104,6 @@ function theSvgCanvasSketch(sketch) {
 	};
 
 	sketch.draw = () => {};
-}
-
-function helpMe() {
-	dialog.alert(lang.process(`LANG_HELPME_MSG`, true));
 }
 
 function resize(w, h) {
@@ -229,7 +225,7 @@ function keyPressed(e) {
 			isPlaying = !isPlaying;
 			break;
 		case 'h':
-			helpMe();
+			generator.helpMe();
 			break;
 		case '[':
 			frameCount -= frameJump;

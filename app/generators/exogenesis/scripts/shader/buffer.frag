@@ -112,18 +112,28 @@ vec3 computeCol(in vec2 uv, in vec2 pos, in vec2 mousePos) {
         return vec3(1.);
     }
 
-    //uv.x = uv.x >= 0.5 ? 1. - uv.x : uv.x; // mirror
+       // Apply mirroring
+    if (doMirrorX) {
+        uv.x = uv.x >= 0.5 ? 1. - uv.x : uv.x;
+        pos.x = -abs(pos.x);
+        mousePos.x = -abs(mousePos.x);
+    }
+    if (doMirrorY) {
+        uv.y = uv.y >= 0.5 ? 1. - uv.y : uv.y;
+        pos.y = -abs(pos.y);
+        mousePos.y = -abs(mousePos.y);
+    }
 
     vec2 curr = texture2D(buffer, flipUv(uv)).xy;
 
     vec2 origPos = pos;
     pos *= 5. / 6. * shapeLen + 1.5 / (shapeLen - 1.);
 
-    // Apply mirroring
-    if (doMirrorX)
-        pos.x = -abs(pos.x);
-    if (doMirrorY)
-        pos.y = -abs(pos.y);
+    // // Apply mirroring
+    // if (doMirrorX)
+    //     pos.x = -abs(pos.x);
+    // if (doMirrorY)
+    //     pos.y = -abs(pos.y);
 
     // Apply rotation
     float c = cos(rotation + PI * 0.5);
@@ -180,8 +190,8 @@ vec3 computeCol(in vec2 uv, in vec2 pos, in vec2 mousePos) {
 
     // if (mouse.z > 0. && distance(mousePos, origPos) < 0.1)
     //     new = vec2(1., 1.);
-    if (mouse.z > 0.)
-        new += exp(-distance(mousePos, origPos) * 20.);
+    // if (mouse.z > 0.)
+    new += exp(-distance(mousePos, origPos) * 12.);
 
     new = clamp(new, 0., 1.);
 

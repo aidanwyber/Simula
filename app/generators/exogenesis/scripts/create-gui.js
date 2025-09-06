@@ -409,7 +409,7 @@ function createGUI() {
 
 	exportTab.addController(
 		new Button(exportTab, 'buttonHelpMe', 'LANG_HELP', controller => {
-			helpMe();
+			generator.helpMe();
 		})
 	);
 
