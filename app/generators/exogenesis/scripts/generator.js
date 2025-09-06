@@ -1,22 +1,28 @@
 class Generator {
-	static name = 'Tattoo Creator';
+	static name = 'Exogenesis';
 	static supportEmail = 'aidanwyber@gmail.nl';
 
 	// palette = [color('#F2EDEB'), color('#120D09'), color('#DDA702')];
 	// white = this.palette.at(0);
 
+	shapes = ['Line segment', 'Intersecting circles (vesica)', 'Triangle'];
+
 	constructor() {
+		this.shape = this.shapes[0];
+		this.shapeLen = 6;
 		this.threshold = 0.37;
 		this.displacementDistance = 0.5;
 		this.displacementAngle = PI;
-		this.rayEasing = 0.5;
 		this.rotation = 0.0;
 		this.doMirrorX = false;
 		this.doMirrorY = false;
+		this.raySpreading = 1;
+		this.rayCount = 11;
+		this.rayBreaks = 3.0;
 	}
 
 	setup() {
-		resize(1080, 1080);
+		resize(1920, 1920);
 		containCanvasInWrapper();
 	}
 
@@ -48,11 +54,15 @@ class Generator {
 			'displacementDistance',
 			this.displacementDistance
 		);
+		bufferShader.setUniform('shapeMode', this.shapes.indexOf(this.shape));
+		bufferShader.setUniform('shapeLen', this.shapeLen);
 		bufferShader.setUniform('displacementAngle', this.displacementAngle);
-		bufferShader.setUniform('rayEasing', this.rayEasing);
 		bufferShader.setUniform('rotation', this.rotation);
 		bufferShader.setUniform('doMirrorX', this.doMirrorX);
 		bufferShader.setUniform('doMirrorY', this.doMirrorY);
+		bufferShader.setUniform('raySpreading', this.raySpreading);
+		bufferShader.setUniform('rayCount', this.rayCount);
+		bufferShader.setUniform('rayBreaks', this.rayBreaks);
 
 		bufferShader.setUniform('resolution', [width, height]);
 		bufferShader.setUniform('progress', progress);
