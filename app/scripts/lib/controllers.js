@@ -699,14 +699,16 @@ class Toggle extends ValuedController {
 		span0.parent(this.controllerElement);
 		span1.parent(this.controllerElement);
 
-		if (this.value) this.controllerElement.elt.toggleAttribute('toggled');
+		// if (isToggled === true)
+		// 	this.controllerElement.elt.toggleAttribute('toggled');
 
 		this.controllerElement.elt.onclick = () => {
 			this.setValue(!this.value);
 		};
 		this.valueCallback = valueCallback;
 
-		this.setValue(isToggled ? true : false);
+		this.value = isToggled === true;
+		this.setValue(isToggled === true);
 	}
 
 	/**
