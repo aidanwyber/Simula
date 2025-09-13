@@ -50,6 +50,7 @@ function preload() {
 
 function setup() {
 	initUtils(10, 30);
+	console.log('utils done');
 
 	canvas =
 		theShader === undefined
@@ -60,8 +61,11 @@ function setup() {
 	createCanvasWrapper();
 
 	lang.setup('en');
+	console.log('lang done');
 
 	generator = new Generator();
+
+	console.log('generator done');
 
 	createGUI();
 

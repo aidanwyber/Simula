@@ -1,0 +1,419 @@
+function createGUI() {
+	if (gui != undefined) gui.div.remove();
+	gui = new GUIForP5();
+
+	gui.setLeft();
+
+	// add logo up top (uses 'assets/generator-logo9.svg', see style.css)
+	let logo = gui.addField(new Field(gui.div, 'logo', ''));
+	// let title = gui.addTitle(3, 'Tattooo Creator', true);
+	// title.div.style.fontSize = '1.5rem';
+	// title.div.style.marginTop = '-1em';
+
+	gui.addTitle(1, Generator.name, true).div.elt.children[0].style.fontSize =
+		'4.05rem';
+
+	const appearanceTab = new Tab('Appearance');
+	const exportTab = new Tab('Export');
+
+	gui.addTabs(appearanceTab, exportTab);
+
+	// // ------------------------------ APPEARANCE ------------------------------
+
+	// randomize
+	appearanceTab.addController(
+		new Button(
+			appearanceTab,
+			'buttonRandomize',
+			'LANG_RANDOMIZE',
+			controller => {
+				appearanceTab.randomizer.randomize();
+				// generator.setup();
+			},
+			controller => {
+				// controller.click(); // randomize on startup
+			}
+		)
+	);
+
+	appearanceTab.addDivider();
+
+	appearanceTab.addTitle(2, 'Pattern', false);
+
+	appearanceTab.addController(
+		new Select(
+			gui,
+			'selectShape',
+			'Garden shape',
+			generator.shapes,
+			0,
+			(controller, value) => {
+				generator.shape = value;
+			}
+		),
+		(doAddToRandomizerAs = true)
+	);
+
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderShapeLen',
+	// 		'Shape size',
+	// 		2,
+	// 		12,
+	// 		generator.shapeLen,
+	// 		0.1,
+	// 		(controller, value) => {
+	// 			generator.shapeLen = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderDisplacementDistance',
+	// 		'Displacement distance',
+	// 		0,
+	// 		1,
+	// 		generator.displacementDistance,
+	// 		0.001,
+	// 		(controller, value) => {
+	// 			generator.displacementDistance = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderDisplacementAngle',
+	// 		'Displacement angle',
+	// 		0,
+	// 		TAU,
+	// 		generator.displacementAngle,
+	// 		0.001,
+	// 		(controller, value) => {
+	// 			generator.displacementAngle = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderRotation',
+	// 		'Rotation',
+	// 		-0.5,
+	// 		0.5,
+	// 		generator.rotation / TAU,
+	// 		1 / 24,
+	// 		(controller, value) => {
+	// 			generator.rotation = value * TAU;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+
+	// appearanceTab.addController(
+	// 	new Toggle(
+	// 		appearanceTab,
+	// 		'toggleMirrorX',
+	// 		'Free X-axis',
+	// 		'Mirrored X-axis',
+	// 		generator.doMirrorX,
+	// 		(controller, value) => {
+	// 			generator.doMirrorX = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+	// appearanceTab.addController(
+	// 	new Toggle(
+	// 		appearanceTab,
+	// 		'toggleMirrorY',
+	// 		'Free Y-axis',
+	// 		'Mirrored Y-axis',
+	// 		generator.doMirrorY,
+	// 		(controller, value) => {
+	// 			generator.doMirrorY = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderRaySpreading',
+	// 		'Ray spread',
+	// 		0,
+	// 		1,
+	// 		generator.raySpreading,
+	// 		0.001,
+	// 		(controller, value) => {
+	// 			generator.raySpreading = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderRayCount',
+	// 		'Ray count',
+	// 		3,
+	// 		16,
+	// 		generator.rayCount,
+	// 		0.5,
+	// 		(controller, value) => {
+	// 			generator.rayCount = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderRayBreaks',
+	// 		'Ray breaks',
+	// 		1,
+	// 		4,
+	// 		generator.rayBreaks,
+	// 		0.5,
+	// 		(controller, value) => {
+	// 			generator.rayBreaks = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+
+	// appearanceTab.addDivider();
+
+	// appearanceTab.addTitle(2, 'View', false);
+
+	// appearanceTab.addController(
+	// 	new Slider(
+	// 		appearanceTab,
+	// 		'sliderThreshold',
+	// 		'Threshold',
+	// 		0.215,
+	// 		0.883,
+	// 		generator.threshold,
+	// 		0.001,
+	// 		(controller, value) => {
+	// 			generator.threshold = value;
+	// 		}
+	// 	),
+	// 	(doAddToRandomizerAs = true)
+	// );
+
+	// ------------------------------ EXPORT ------------------------------
+	exportTab.addTitle(2, 'As an LANG_IMAGE', false);
+
+	exportTab.addController(
+		new Button(
+			exportTab,
+			'buttonCopyPNG',
+			'LANG_COPY_TO_CLIPBOARD',
+			controller => {
+				copyCanvasToClipboard();
+			},
+			controller => {
+				controller._doUpdateChangeSet = false;
+			}
+		)
+	);
+
+	exportTab.addController(
+		new Button(
+			exportTab,
+			'buttonDownloadPNG',
+			'Download PNG',
+			controller => {
+				save(Generator.getOutputFileName() + '.png');
+			},
+			controller => {
+				controller._doUpdateChangeSet = false;
+			}
+		)
+	);
+
+	// exportTab.addController(new Button(
+	//   exportTab, 'buttonDownloadSVG', 'Download SVG',
+	//   (controller) => {
+	//     generator.draw(doSVGToo=true);
+	//     svgCanvas.save(Generator.getOutputFileName() + '.svg');
+	//   }
+	// ));
+
+	exportTab.addDivider();
+
+	exportTab.addTitle(2, 'As a settings file', false);
+
+	exportTab.addController(
+		new Button(
+			exportTab,
+			'buttonSaveSettings',
+			'LANG_SAVE_SETTINGS',
+			controller => {
+				const fileName = dialog
+					.prompt(lang.process('LANG_CHOOSE_FILE_NAME_MSG', true))
+					.then(fileName => {
+						changeSet.download(fileName);
+					});
+			},
+			controller => {
+				controller._doUpdateChangeSet = false;
+			}
+		)
+	);
+
+	exportTab.addController(
+		new JSONFileLoader(
+			exportTab,
+			'jsonFileLoaderSettings',
+			'LANG_LOAD_SETTINGS',
+			(controller, file) => {
+				print(controller, file);
+				controller.setConsole(controller.fileName, '');
+				changeSet.loadFromJSON(JSON.stringify(file.data));
+			},
+			controller => {
+				controller.controllerElement.elt.accept += ',.settings';
+			},
+			controller => {
+				controller._doUpdateChangeSet = false;
+			}
+		)
+	);
+
+	exportTab.addDivider();
+
+	exportTab.addTitle(2, 'LANG_SUPPORT', false);
+
+	exportTab.addController(
+		new Button(exportTab, 'buttonHelpMe', 'LANG_HELP', controller => {
+			generator.helpMe();
+		})
+	);
+
+	if (Generator.supportEmail?.indexOf('@') > -1) {
+		let contactField = exportTab.addHTMLAsNewField(
+			lang.process(
+				`<a href="mailto:${Generator.supportEmail}` +
+					`?subject=${Generator.name} generator` +
+					`">LANG_CONTACT_MSG</a>`
+			)
+		);
+		contactField.div.id('contact');
+		contactField.div.parent(exportTab.div);
+	}
+
+	// ------------------------------ GUI BOTTOM ------------------------------
+	gui.div.child(createDiv().class('gui-filler')); // pushes undo/redo to bottom
+
+	gui.createUndoRedoButtons();
+
+	gui.createP5CatalystLogo();
+
+	// gui.createDarkModeButton();
+	gui.setDarkMode();
+
+	// gui.randomizer.randomize(); // initialize randomly
+
+	gui.setup();
+}
+
+const resolutionOptions = [
+	'Full-HD (1080p) LANG_PORTRAIT: 1080 x 1920',
+	'Full-HD (1080p) LANG_LANDSCAPE: 1920 x 1080',
+	'4K-Ultra-HD (2160p): 3840 x 2160',
+
+	'Instagram post LANG_PORTRAIT: 1080 x 1350',
+	'(Instagram post LANG_SQUARE): 1080 x 1080',
+	'Instagram story: 1080 x 1920',
+
+	'Facebook post LANG_LANDSCAPE: 1200 x 630',
+	'Facebook post LANG_PORTRAIT: 630 x 1200',
+	'Facebook post LANG_SQUARE: 1200 x 1200',
+	'Facebook story: 1080 x 1920',
+	'Facebook cover photo: 851 x 315',
+
+	'X post LANG_LANDSCAPE: 1600 x 900',
+	'X post LANG_PORTRAIT: 1080 x 1350',
+	'X post LANG_SQUARE: 1080 x 1080',
+	'X cover photo: 1500 x 500',
+
+	'Linkedin LANG_PROFILEPIC: 400 x 400',
+	'Linkedin cover photo: 1584 x 396',
+	'Linkedin image post: 1200 x 628',
+
+	'Mastodon post LANG_LANDSCAPE: 1280 x 720',
+	'Mastodon post LANG_SQUARE: 1200 x 1200',
+
+	'BlueSky post LANG_LANDSCAPE: 1200 x 675',
+	'BlueSky post LANG_SQUARE: 1200 x 1200',
+	'BlueSky header: 1500 x 500',
+
+	'YouTube LANG_PROFILEPIC: 800 x 800',
+	'YouTube banner: 2048 x 1152',
+	'YouTube thumbnail: 1280 x 720',
+	'YouTube shorts/stories: 1080 x 1920',
+
+	'TikTok LANG_PORTRAIT: 1080 x 1920',
+	'TikTok LANG_SQUARE: 1080 x 1080',
+
+	'PowerPoint: 1920 x 1080',
+
+	getAPaperResolutionOptionAtDpi(5, 300),
+	getAPaperResolutionOptionAtDpi(4, 300),
+	getAPaperResolutionOptionAtDpi(3, 300),
+	getAPaperResolutionOptionAtDpi(2, 300),
+	getAPaperResolutionOptionAtDpi(1, 300),
+	getAPaperResolutionOptionAtDpi(0, 300),
+	getAPaperResolutionOptionAtDpi(5, 300, false),
+	getAPaperResolutionOptionAtDpi(4, 300, false),
+	getAPaperResolutionOptionAtDpi(3, 300, false),
+	getAPaperResolutionOptionAtDpi(2, 300, false),
+	getAPaperResolutionOptionAtDpi(1, 300, false),
+	getAPaperResolutionOptionAtDpi(0, 300, false),
+];
+
+function getAPaperResolutionOptionAtDpi(aNumber, dpi, isPortrait = true) {
+	// A0 paper size in mm
+	const baseWidth = 841;
+	const baseHeight = 1189;
+	const factor = Math.pow(2, aNumber / 2);
+	const wMm = Math.floor(baseWidth / factor);
+	const hMm = Math.floor(baseHeight / factor);
+	const wPx = Math.round((wMm / 25.4) * dpi);
+	const hPx = Math.round((hMm / 25.4) * dpi);
+	return (
+		`A${aNumber} ${
+			isPortrait ? 'LANG_PORTRAIT' : 'LANG_LANDSCAPE'
+		} @ ${dpi} DPI: ` +
+		`${isPortrait ? wPx : hPx} x ${isPortrait ? hPx : wPx}`
+	);
+}
+
+function getAPaperResolutionOptionAtDpi(aNumber, dpi, isPortrait = true) {
+	// A0 paper size in mm
+	const baseWidth = 841;
+	const baseHeight = 1189;
+	const factor = Math.pow(2, aNumber / 2);
+	const wMm = Math.floor(baseWidth / factor);
+	const hMm = Math.floor(baseHeight / factor);
+	const wPx = Math.round((wMm / 25.4) * dpi);
+	const hPx = Math.round((hMm / 25.4) * dpi);
+	return (
+		`A${aNumber} ${
+			isPortrait ? 'LANG_PORTRAIT' : 'LANG_LANDSCAPE'
+		} @ ${dpi} DPI: ` +
+		`${isPortrait ? wPx : hPx} x ${isPortrait ? hPx : wPx}`
+	);
+}
