@@ -1,39 +1,56 @@
 class Eden {
 	constructor(nPlants, nAnimals) {
 		this.container = new Container(0);
-		console.log('container', this.container);
 
-		this.plants = [];
-		for (let i = 0; i < nPlants; i++) {
-			this.plants.push(new Plant(this.container));
-			console.log('created plant');
-		}
-		console.log('plants', this.plants);
+		this.physics = new Physics2D();
+		// this.physics.hasGravity = true;
+		// this.physics.hasRepulsion = true;
+		this.physics.damping = 0.1;
 
-		this.animals = [];
-		// for (let i = 0; i < nAnimals; i++) {
-		// 	this.animals.push(new Animal(this.container));
+		// this.physics.setContainer(this.container);
+		// console.log('container', this.container);
+
+		// this.plants = [];
+		// for (let i = 0; i < nPlants; i++) {
+		// 	this.plants.push(new Plant(this));
+		// 	console.log('created plant');
 		// }
-		console.log('animals', this.animals);
+		// console.log('plants', this.plants);
 
-		this.entities = this.plants.concat(this.animals);
-		console.log('entities', this.entities);
+		// this.animals = [];
+		// // for (let i = 0; i < nAnimals; i++) {
+		// // 	this.animals.push(new Animal(this));
+		// // }
+		// console.log('animals', this.animals);
+
+		// this.entities = this.plants.concat(this.animals);
+		// console.log('entities', this.entities);
 
 		// this.setNewContainer();
+
+		this.human = new Human(
+			this.physics,
+			new Vec(width / 2, height / 2),
+			new Vec(0, 1)
+		);
 	}
 
 	update() {
-		for (let entity of this.entities) {
-			entity.update(this.entities);
-		}
+		// for (let entity of this.entities) {
+		// 	entity.update(this.entities);
+		// }
+
+		this.physics.update();
 	}
 
 	draw() {
-		this.container.draw();
+		// this.container.draw();
 
-		for (let entity of this.entities) {
-			entity.draw();
-		}
+		// for (let entity of this.entities) {
+		// 	entity.draw();
+		// }
+
+		this.human.draw();
 	}
 
 	setNewContainer() {
@@ -52,8 +69,8 @@ class Entity {
 	connectedIndices = [];
 	lines = [];
 
-	constructor(container) {
-		this.container = container;
+	constructor(eden) {
+		this.eden = eden;
 	}
 
 	getLines() {
@@ -68,8 +85,8 @@ class Entity {
 
 	relax(entities) {
 		for (let point of this.points) {
-			// Check if inside container
-			if (this.container.shape.containsPoint(point)) {
+			// Check if inside eden
+			if (this.eden.container.shape.containsPoint(point)) {
 			}
 		}
 	}
@@ -78,8 +95,8 @@ class Entity {
 class Plant extends Entity {
 	static maxPointCount = 20;
 
-	constructor(container) {
-		super(container);
+	constructor(eden) {
+		super(eden);
 		this.seedLoc = new Vec2D(90, 120); // container.getRandomPoint();
 		this.points = [this.seedLoc];
 	}
@@ -132,8 +149,8 @@ class Plant extends Entity {
 }
 
 class Animal extends Entity {
-	constructor(container) {
-		super(container);
+	constructor(eden) {
+		super(eden);
 	}
 
 	update(entities) {
