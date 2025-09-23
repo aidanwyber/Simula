@@ -38,14 +38,14 @@ let gui;
 let bufferShader, bufferPG;
 
 function preload() {
-	bufferShader = loadShader(
-		'scripts/shader/frag.vert',
-		'scripts/shader/buffer.frag'
-	);
-	theShader = loadShader(
-		'scripts/shader/frag.vert',
-		'scripts/shader/shader.frag'
-	);
+	// bufferShader = loadShader(
+	// 	'scripts/shader/frag.vert',
+	// 	'scripts/shader/buffer.frag'
+	// );
+	// theShader = loadShader(
+	// 	'scripts/shader/frag.vert',
+	// 	'scripts/shader/shader.frag'
+	// );
 }
 
 function setup() {
@@ -255,7 +255,9 @@ function keyPressed(e) {
 
 function mousePressed() {}
 
-function mouseReleased() {}
+function mouseReleased() {
+	generator.eden.physics.heldParticleIndex = null;
+}
 
 const relScrollVel = (isMac() ? 0.1 : 1) * 0.06;
 

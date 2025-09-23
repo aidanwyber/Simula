@@ -37,7 +37,11 @@ class Generator {
 		clear();
 
 		resetMatrix();
-		translate(-width / 2, -height / 2);
+		// translate(-width / 2, -height / 2);
+
+		noFill();
+		stroke(0);
+		rect(0, 0, width, height);
 
 		this.eden.update();
 		this.eden.draw();
@@ -52,68 +56,68 @@ class Generator {
 		// }
 	}
 
-	drawBuffer() {
-		bufferShader.setUniform('buffer', bufferPG);
-		bufferShader.setUniform(
-			'displacementDistance',
-			this.displacementDistance
-		);
-		bufferShader.setUniform('shapeMode', this.shapes.indexOf(this.shape));
-		bufferShader.setUniform('shapeLen', this.shapeLen);
-		bufferShader.setUniform('displacementAngle', this.displacementAngle);
-		bufferShader.setUniform('rotation', this.rotation);
-		bufferShader.setUniform('doMirrorX', this.doMirrorX);
-		bufferShader.setUniform('doMirrorY', this.doMirrorY);
-		bufferShader.setUniform('raySpreading', this.raySpreading);
-		bufferShader.setUniform('rayCount', this.rayCount);
-		bufferShader.setUniform('rayBreaks', this.rayBreaks);
+	// drawBuffer() {
+	// 	bufferShader.setUniform('buffer', bufferPG);
+	// 	bufferShader.setUniform(
+	// 		'displacementDistance',
+	// 		this.displacementDistance
+	// 	);
+	// 	bufferShader.setUniform('shapeMode', this.shapes.indexOf(this.shape));
+	// 	bufferShader.setUniform('shapeLen', this.shapeLen);
+	// 	bufferShader.setUniform('displacementAngle', this.displacementAngle);
+	// 	bufferShader.setUniform('rotation', this.rotation);
+	// 	bufferShader.setUniform('doMirrorX', this.doMirrorX);
+	// 	bufferShader.setUniform('doMirrorY', this.doMirrorY);
+	// 	bufferShader.setUniform('raySpreading', this.raySpreading);
+	// 	bufferShader.setUniform('rayCount', this.rayCount);
+	// 	bufferShader.setUniform('rayBreaks', this.rayBreaks);
 
-		bufferShader.setUniform('resolution', [width, height]);
-		bufferShader.setUniform('progress', progress);
-		bufferShader.setUniform('time', time);
-		bufferShader.setUniform('mouse', [
-			mouseX,
-			mouseY,
-			mouseIsPressed && isInCanvas({ x: mouseX, y: mouseY }) ? 1.0 : 0.0,
-		]);
-		bufferShader.setUniform('SSIDHash', SSID / 1e8);
-		bufferShader.setUniform('utilBools', utilBools);
+	// 	bufferShader.setUniform('resolution', [width, height]);
+	// 	bufferShader.setUniform('progress', progress);
+	// 	bufferShader.setUniform('time', time);
+	// 	bufferShader.setUniform('mouse', [
+	// 		mouseX,
+	// 		mouseY,
+	// 		mouseIsPressed && isInCanvas({ x: mouseX, y: mouseY }) ? 1.0 : 0.0,
+	// 	]);
+	// 	bufferShader.setUniform('SSIDHash', SSID / 1e8);
+	// 	bufferShader.setUniform('utilBools', utilBools);
 
-		bufferPG.resetMatrix();
-		bufferPG.shader(bufferShader);
-		bufferPG.rectMode(CENTER);
-		bufferPG.noStroke();
-		bufferPG.blendMode(BLEND);
-		bufferPG.rect(0, 0, width, height);
-	}
+	// 	bufferPG.resetMatrix();
+	// 	bufferPG.shader(bufferShader);
+	// 	bufferPG.rectMode(CENTER);
+	// 	bufferPG.noStroke();
+	// 	bufferPG.blendMode(BLEND);
+	// 	bufferPG.rect(0, 0, width, height);
+	// }
 
-	drawShader() {
-		theShader.setUniform('buffer', bufferPG);
-		theShader.setUniform('eps', 0.05);
-		theShader.setUniform('threshold', this.threshold);
+	// drawShader() {
+	// 	theShader.setUniform('buffer', bufferPG);
+	// 	theShader.setUniform('eps', 0.05);
+	// 	theShader.setUniform('threshold', this.threshold);
 
-		theShader.setUniform('resolution', [width, height]);
-		theShader.setUniform('progress', progress);
-		theShader.setUniform('time', time);
-		theShader.setUniform('mouse', [
-			mouseX,
-			mouseY,
-			mouseIsPressed ? 1.0 : 0.0,
-		]);
-		theShader.setUniform('SSIDHash', SSID / 1e8);
-		theShader.setUniform('utilBools', utilBools);
+	// 	theShader.setUniform('resolution', [width, height]);
+	// 	theShader.setUniform('progress', progress);
+	// 	theShader.setUniform('time', time);
+	// 	theShader.setUniform('mouse', [
+	// 		mouseX,
+	// 		mouseY,
+	// 		mouseIsPressed ? 1.0 : 0.0,
+	// 	]);
+	// 	theShader.setUniform('SSIDHash', SSID / 1e8);
+	// 	theShader.setUniform('utilBools', utilBools);
 
-		resetMatrix();
-		shader(theShader);
-		rectMode(CENTER);
-		noStroke();
-		blendMode(BLEND);
-		rect(0, 0, width, height);
+	// 	resetMatrix();
+	// 	shader(theShader);
+	// 	rectMode(CENTER);
+	// 	noStroke();
+	// 	blendMode(BLEND);
+	// 	rect(0, 0, width, height);
 
-		resetMatrix();
-		// ensures 0–width and 0–height range in WEBGL mode
-		translate(-width / 2, -height / 2);
-	}
+	// 	resetMatrix();
+	// 	// ensures 0–width and 0–height range in WEBGL mode
+	// 	translate(-width / 2, -height / 2);
+	// }
 
 	helpMe() {
 		dialog.alert(lang.process(`LANG_HELPME_MSG_EXOGENESIS`, true));

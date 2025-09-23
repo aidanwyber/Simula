@@ -35,16 +35,27 @@ class Human {
 
 	springs = [];
 
-	kRigid = 0.1;
-	kLoose = 0.005;
+	kRigid = 0.5;
+	kLoose = 0.05;
 
 	constructor(physics, headPos, dir) {
 		this.physics = physics;
 
+		console.log('createParticles...');
 		this.createParticles(headPos, dir);
-		this.createHairs();
+		console.log('createParticles done.');
+
+		// console.log('createHairs...');
+		// this.createHairs();
+		// console.log('createHairs done.');
+
+		console.log('createSprings...');
 		this.createSprings();
+		console.log('createSprings done.');
+
+		console.log('createLimbs...');
 		this.createLimbs();
+		console.log('createLimbs done.');
 	}
 
 	createParticles(headPos, dir) {
@@ -75,32 +86,43 @@ class Human {
 
 		for (let [name, p] of Object.entries(this.particles)) {
 			this.physics.addParticle(p);
+			console.log(name, p);
 		}
 	}
 
 	createHairs() {
+		const nHairs = 1;
+		const segmentCount = 2;
 		this.hairs = [];
 		const hairDir = this.particles.leftShoulder
 			.sub(this.particles.rightShoulder)
 			.perp()
 			.normalize();
-		for (let i = 0; i < 18; i++) {
-			const folliclePos = this.particles.head.add(
-				hairDir
-					.perp()
-					.scale((((i - 18 / 2) / (18 / 2)) * this.headWidth) / 2)
+		for (let i = 0; i < nHairs; i++) {
+			const folliclePos = new Particle(
+				this.particles.head.add(
+					hairDir
+						.perp()
+						.scale(
+							(((i - nHairs / 2) / (nHairs / 2)) *
+								this.headWidth) /
+								2
+						)
+				)
 			);
-			console.log(i, folliclePos);
 			this.hairs.push(
 				new SpringChain(
 					this.physics,
-					folliclePos,
-					hairDir.scale(this.hairLength / 10),
-					10,
+					this.particles.head, //folliclePos,
+					hairDir.scale(this.hairLength / segmentCount),
+					segmentCount,
 					this.kRigid
 				)
 			);
 		}
+		// for (let hair of this.hairs) {
+		// 	for (let p of hair.particles) p.mass = 0.1;
+		// }
 	}
 
 	createSprings() {
@@ -113,16 +135,16 @@ class Human {
 			new Spring(
 				this.particles.head,
 				this.particles.leftShoulder,
-				neckShoulderLen,
-				this.kLoose
+				null, // neckShoulderLen,
+				this.kRigid
 			)
 		);
 		this.springs.push(
 			new Spring(
 				this.particles.head,
 				this.particles.rightShoulder,
-				neckShoulderLen,
-				this.kLoose
+				null, // neckShoulderLen,
+				this.kRigid
 			)
 		);
 		// connect shoulders
@@ -130,7 +152,7 @@ class Human {
 			new Spring(
 				this.particles.leftShoulder,
 				this.particles.rightShoulder,
-				this.shoulderWidth,
+				null, // this.shoulderWidth,
 				this.kRigid
 			)
 		);
@@ -144,7 +166,7 @@ class Human {
 			new Spring(
 				this.particles.leftShoulder,
 				this.particles.rightHip,
-				this.shoulderHipDiagonal,
+				null, // shoulderHipDiagonal,
 				this.kRigid
 			)
 		);
@@ -152,7 +174,7 @@ class Human {
 			new Spring(
 				this.particles.rightShoulder,
 				this.particles.leftHip,
-				this.shoulderHipDiagonal,
+				null, // shoulderHipDiagonal,
 				this.kRigid
 			)
 		);
@@ -164,7 +186,7 @@ class Human {
 			new Spring(
 				this.particles.rightShoulder,
 				this.particles.rightHip,
-				this.shoulderHipLength,
+				null, // shoulderHipLength,
 				this.kLoose
 			)
 		);
@@ -172,7 +194,7 @@ class Human {
 			new Spring(
 				this.particles.leftShoulder,
 				this.particles.leftHip,
-				this.shoulderHipLength,
+				null, // shoulderHipLength,
 				this.kLoose
 			)
 		);
@@ -181,14 +203,32 @@ class Human {
 			new Spring(
 				this.particles.leftHip,
 				this.particles.rightHip,
-				this.hipWidth,
+				null, // this.hipWidth,
 				this.kRigid
+			)
+		);
+
+		// connect head to hips for staying on the nexk side
+		this.springs.push(
+			new Spring(
+				this.particles.head,
+				this.particles.leftHip,
+				null,
+				this.kLoose
+			)
+		);
+		this.springs.push(
+			new Spring(
+				this.particles.head,
+				this.particles.rightHip,
+				null,
+				this.kLoose
 			)
 		);
 	}
 
 	createLimbs() {
-		const n = 3;
+		const n = 2;
 
 		const armDelta = this.particles.leftShoulder
 			.sub(this.particles.rightShoulder)
@@ -235,11 +275,25 @@ class Human {
 		this.drawNeck();
 		this.drawArms();
 		this.drawHead();
+		this.drawHairs();
 
 		for (let spring of this.springs) {
 			this.stroke();
 			spring.draw();
 		}
+
+		push();
+		{
+			for (let [name, p] of Object.entries(this.particles)) {
+				p.draw();
+				textFont('Arial');
+				textSize(20);
+				stroke(255, 0, 0);
+				noFill();
+				text(name, p.x + 20, p.y - 20);
+			}
+		}
+		pop();
 	}
 
 	drawLegs() {
@@ -288,6 +342,13 @@ class Human {
 			circle(eyeDist / 2, 0, eyeDiam);
 		}
 		pop();
+	}
+
+	drawHairs() {
+		this.stroke();
+		for (let hair of this.hairs) {
+			hair.draw();
+		}
 	}
 
 	fill() {

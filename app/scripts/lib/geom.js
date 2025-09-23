@@ -67,7 +67,7 @@ class Vec {
 
 	normalize() {
 		let m = this.mag();
-		if (m > 0) {
+		if (m > Vec.epsilon) {
 			return this.scale(1 / m);
 		}
 		return new Vec(0, 0);
@@ -148,6 +148,8 @@ class Vec {
 		return this;
 	}
 
+	static epsilon = 1e-4;
+
 	static random2D() {
 		let angle = Math.random() * Math.PI * 2;
 		return new Vec(Math.cos(angle), Math.sin(angle));
@@ -215,6 +217,50 @@ class Line {
 		return `Line(${this.a.toString()} -> ${this.b.toString()})`;
 	}
 
+	intersectionPoint(line) {
+		const x1 = this.a.x;
+		const y1 = this.a.y;
+		const x2 = this.b.x;
+		const y2 = this.b.y;
+		const x3 = line2.a.x;
+		const y3 = line2.a.y;
+		const x4 = line2.b.x;
+		const y4 = line2.b.y;
+		const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+		if (denom === 0) {
+			return null; // Lines are parallel
+		}
+		const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
+		const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom;
+		if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+			return new Vec(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
+		}
+		return null; // No intersection within the line segments
+	}
+
+	intersectCircle(circle) {
+		const d = this.heading;
+		const f = this.a.sub(circle);
+		const a = d.magSq();
+		const b = 2 * f.dot(d);
+		const c = f.magSq() - circle.radius * circle.radius;
+		const discriminant = b * b - 4 * a * c;
+		if (discriminant < 0) {
+			return []; // No intersection
+		}
+		const sqrtDiscriminant = Math.sqrt(discriminant);
+		const t1 = (-b - sqrtDiscriminant) / (2 * a);
+		const t2 = (-b + sqrtDiscriminant) / (2 * a);
+		const intersections = [];
+		if (t1 >= 0 && t1 <= 1) {
+			intersections.push(this.a.add(d.scale(t1)));
+		}
+		if (t2 >= 0 && t2 <= 1) {
+			intersections.push(this.a.add(d.scale(t2)));
+		}
+		return intersections;
+	}
+
 	static fromAngleLength(angle, length, origin = new Vec(0, 0)) {
 		let dir = Vec.fromAngle(angle).scale(length);
 		let a = origin.copy();
@@ -223,15 +269,15 @@ class Line {
 	}
 }
 
-// class Circle extends p5.Vector {
-// 	r;
+// class Circle extends Vec {
+// 	radius;
 
-// 	constructor(center, r) {
+// 	constructor(center, radius) {
 // 		super(center.x, center.y);
-// 		this.r = r;
+// 		this.radius = radius;
 // 	}
 
 // 	distanceToPoint(pt) {
-// 		return p5.Vector.dist(this, pt) - this.r;
+// 		return this.distanceTo(pt) - this.radius;
 // 	}
 // }

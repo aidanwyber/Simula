@@ -5,7 +5,11 @@ class Eden {
 		this.physics = new Physics2D();
 		// this.physics.hasGravity = true;
 		// this.physics.hasRepulsion = true;
-		this.physics.damping = 0.1;
+		this.physics.hasMouseInteraction = true;
+		this.physics.hasBounce = true;
+		// this.physics.damping = 0.05;
+		// this.physics.hasFriction = true;
+		this.physics.hasDrag = true;
 
 		// this.physics.setContainer(this.container);
 		// console.log('container', this.container);
@@ -33,6 +37,17 @@ class Eden {
 			new Vec(width / 2, height / 2),
 			new Vec(0, 1)
 		);
+
+		// this.adam = new Adam(
+		// 	this.physics,
+		// 	new Vec(width / 2, height / 2),
+		// 	new Vec(-1, -1).normalize()
+		// );
+		// this.eve = new Eve(
+		// 	this.physics,
+		// 	new Vec(width / 2, height / 2),
+		// 	new Vec(1, 1).normalize()
+		// );
 	}
 
 	update() {
@@ -51,6 +66,8 @@ class Eden {
 		// }
 
 		this.human.draw();
+		// this.adam.draw();
+		// this.eve.draw();
 	}
 
 	setNewContainer() {

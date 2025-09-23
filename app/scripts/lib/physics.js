@@ -1,48 +1,87 @@
 class Particle extends Vec {
-	vel;
-	acc;
+	prev;
+	temp;
+	force;
+
 	mass;
-	isFixed;
-	hasLifespan;
-	lifespan;
-	hasTrail;
-	trail;
-	trailLength;
-	radius;
+	isLocked;
+	hasLifespan = false;
+	lifespan = 255;
+	hasTrail = false;
+	trail = [];
+	trailLength = 10;
+	radius = 10;
 	springs = null;
 
-	constructor(x, y, mass = 1, isFixed = false) {
+	// behaviors;
+
+	constructor(x, y, mass = 1, isLocked = false) {
 		if (x instanceof Vec) super(x);
 		else super(x, y);
-		this.vel = new Vec(0, 0);
-		this.acc = new Vec(0, 0);
+
+		this.prev = this.copy();
+		this.temp = new Vec();
+		this.force = new Vec();
+
 		this.mass = mass;
-		this.isFixed = isFixed;
-		this.hasLifespan = false;
-		this.lifespan = 255;
-		this.hasTrail = false;
-		this.trail = [];
-		this.trailLength = 10;
-		this.radius = 5;
+		this.isLocked = isLocked;
 
-		this.x += (Math.random() * 2 - 1) * 1e-3;
-		this.y += (Math.random() * 2 - 1) * 1e-3;
+		// this.x += (Math.random() * 2 - 1) * 1e-3;
+		// this.y += (Math.random() * 2 - 1) * 1e-3;
 	}
 
-	addForce(force) {
-		if (this.isFixed) return;
-		this.acc.addSelf(force.div(this.mass));
+	addForce(v) {
+		this.force.addSelf(v);
 	}
 
-	addSpring(spring) {
-		if (this.springs === null) this.springs = [];
-		this.springs.push(spring);
+	clearForce() {
+		this.force.set(0, 0);
+	}
+
+	// applyBehaviors() {
+	// 	for (let behavior of this.behaviors) {
+	// 		behavior.applyBehavior(this);
+	// 	}
+	// }
+
+	addVelocity(deltaVel) {
+		this.prev.subSelf(deltaVel);
+	}
+
+	clearVelocity() {
+		this.prev.set(this);
+	}
+
+	getVelocity() {
+		return this.sub(this.prev);
+	}
+
+	dampen(gamma) {
+		this.addVelocity(this.getVelocity().scale(1 - gamma));
+	}
+
+	update() {
+		if (this.isLocked) return;
+
+		// this.applyBehaviors();
+
+		this.temp.set(this);
+		this.addSelf(this.sub(this.prev).addSelf(this.force.scale(this.mass)));
+		this.prev.set(this.temp);
+		this.clearForce();
 	}
 
 	draw() {
-		fill(255, this.lifespan);
+		fill(0, this.lifespan);
 		noStroke();
 		circle(this.x, this.y, this.radius * 2);
+
+		if (this.isHovered()) {
+			console.log('hovered!');
+			stroke(0, this.lifespan);
+			noFill();
+			circle(this.x, this.y, this.radius * 4);
+		}
 
 		if (this.hasTrail) {
 			noFill();
@@ -54,17 +93,49 @@ class Particle extends Vec {
 			endShape();
 		}
 	}
+
+	addSpring(spring) {
+		if (this.springs === null) this.springs = [];
+		this.springs.push(spring);
+	}
+
+	isHovered() {
+		return (
+			this.distanceToSq(new Vec(mouseX, mouseY)) <
+			this.radius * this.radius
+		);
+	}
 }
+
+// class Behavior {
+// 	applyBehavior(p) {}
+// }
+
+// class GravityBehavior extends Behavior {
+// 	acc;
+
+// 	constructor(acc) {
+// 		this.acc = acc;
+// 	}
+
+// 	applyBehavior(p) {
+// 		p.addForce(this.acc.div(p.mass));
+// 	}
+// }
 
 class Spring {
 	a;
 	b;
 	restLength;
 	k; // Spring constant
+	damping = 0.05;
+
+	static epsilon = 1e-2;
+
 	constructor(a, b, restLength, k) {
 		this.a = a;
 		this.b = b;
-		this.restLength = restLength;
+		this.restLength = restLength === null ? a.distanceTo(b) : restLength;
 		this.k = k;
 
 		a.addSpring(this);
@@ -74,9 +145,11 @@ class Spring {
 	apply() {
 		const diff = this.b.sub(this.a);
 		const dx = diff.mag() - this.restLength;
-		const force = diff.normalizeTo(this.k * -dx);
-		this.a.addForce(force.scale(-0.5));
-		this.b.addForce(force.scale(+0.5));
+		if (Math.abs(dx) > Spring.epsilon) {
+			const force = diff.normalizeTo(this.k * -dx);
+			this.a.addForce(force.scale(-0.5));
+			this.b.addForce(force.scale(+0.5));
+		}
 	}
 
 	draw() {
@@ -118,6 +191,14 @@ class SpringChain {
 			new Spring(pi, pn, segmentLength, k);
 		}
 	}
+
+	draw() {
+		beginShape();
+		for (let p of this.particles) {
+			vertex(p.x, p.y);
+		}
+		endShape();
+	}
 }
 
 class Physics2D {
@@ -130,22 +211,26 @@ class Physics2D {
 	wind = new Vec(0.1, 0);
 
 	hasFriction = false;
-	frictionCoefficient = 0.01;
+	frictionCoefficient = 0.1;
 
 	hasDrag = false;
-	dragCoefficient = 0.01;
+	dragCoefficient = 0.0;
 
 	hasBounce = false;
 	bounceCoefficient = 0.8;
 
 	hasRepulsion = false;
-	repulsionStrength = 1;
-	repulsionRadius = 1;
+	repulsionStrength = 10;
+	repulsionRadius = 10;
 
 	hasDamping = true;
 	damping = 0.01;
 
 	hasMouseInteraction = true;
+	heldParticleIndex = null;
+
+	iters = 50;
+	timeStep = 1 / this.iters;
 
 	constructor() {}
 
@@ -155,70 +240,51 @@ class Physics2D {
 	}
 
 	updateParticles() {
+		// all accelerations first
 		for (let p of this.particles) {
-			if (p.isFixed) continue;
+			if (p.isLocked) continue;
 
-			p.acc.set(0, 0);
-
-			// // physics properties
-			// if (this.hasGravity) {
-			// 	p.addForce(this.gravity);
-			// }
+			// physics properties
+			if (this.hasGravity) {
+				p.addForce(this.gravity);
+			}
 
 			// if (this.hasWind) {
 			// 	p.addForce(this.wind);
 			// }
 
-			// if (this.hasFriction) {
-			// 	let friction = p5.Vector.mult(p.vel, -1);
-			// 	friction.setMag(this.frictionCoefficient);
-			// 	p.addForce(friction);
-			// }
+			if (this.hasFriction) {
+				let friction = p.getVelocity().scale(-this.frictionCoefficient);
+				p.addForce(friction);
+			}
 
-			// if (this.hasDrag) {
-			// 	let drag = p5.Vector.mult(p.vel, -1);
-			// 	drag.setMag(this.dragCoefficient * p.vel.magSq());
-			// 	p.addForce(drag);
-			// }
+			if (this.hasDrag) {
+				const vel = p.getVelocity();
+				let drag = vel.normalizeTo(-this.dragCoefficient * vel.magSq());
+				p.addForce(drag);
+			}
 
-			// if (this.hasBounce) {
-			// 	if (p.pos.x < 0) {
-			// 		p.pos.x = 0;
-			// 		p.vel.x *= -this.bounceCoefficient;
-			// 	} else if (p.pos.x > width) {
-			// 		p.pos.x = width;
-			// 		p.vel.x *= -this.bounceCoefficient;
-			// 	}
-			// 	if (p.pos.y < 0) {
-			// 		p.pos.y = 0;
-			// 		p.vel.y *= -this.bounceCoefficient;
-			// 	} else if (p.pos.y > height) {
-			// 		p.pos.y = height;
-			// 		p.vel.y *= -this.bounceCoefficient;
-			// 	}
-			// }
+			if (this.hasRepulsion) {
+				const rrSq = this.repulsionRadius * this.repulsionRadius;
+				for (let other of this.particles) {
+					if (other === p) continue;
 
-			// if (this.hasRepulsion) {
-			// 	const rrSq = this.repulsionRadius * this.repulsionRadius;
-			// 	for (let other of this.particles) {
-			// 		if (other !== p) {
-			// 			let dir = p.sub(other);
-			// 			let distSq = dir.magSq();
-			// 			if (distSq < rrSq && distSq > 0) {
-			// 				dir.normalizeToSelf(
-			// 					this.repulsionStrength / distSq
-			// 				);
-			// 				p.addForce(dir);
-			// 			}
-			// 		}
-			// 	}
-			// }
+					let dir = p.sub(other);
+					let distSq = dir.magSq();
+					if (distSq < rrSq && distSq > 0) {
+						dir.normalizeToSelf(this.repulsionStrength / distSq);
+						p.addForce(dir);
+					}
+				}
+			}
 
 			if (
-				mouseIsPressed & this.hasMouseInteraction &&
-				new Vec(mouseX, mouseY).distanceToSq(p) < p.r * p.r
+				this.hasMouseInteraction &&
+				this.heldParticleIndex === null &&
+				mouseIsPressed &&
+				p.isHovered()
 			) {
-				p.set(mouseX, mouseY);
+				this.heldParticleIndex = this.particles.indexOf(p);
 			}
 
 			// // particle properties
@@ -231,7 +297,7 @@ class Physics2D {
 			// }
 
 			// if (p.hasTrail) {
-			// 	p.trail.push(p.pos.copy());
+			// 	p.trail.push(p.copy());
 			// 	if (p.trail.length > p.trailLength) {
 			// 		p.trail.shift();
 			// 	}
@@ -242,14 +308,46 @@ class Physics2D {
 					s.apply();
 				}
 			}
+		}
 
-			p.vel.addSelf(p.acc);
+		// now change positions based on accelerations
+		for (let p of this.particles) {
+			if (p.isLocked) continue;
 
-			// if (this.hasDamping) {
-			// 	p.vel.scaleSelf(1 - this.damping);
-			// }
+			p.force.scaleSelf(this.timeStep);
 
-			p.addSelf(p.vel);
+			if (this.hasDamping) {
+				p.dampen(this.damping);
+			}
+
+			p.update();
+
+			if (this.hasBounce) {
+				if (p.x < p.radius) {
+					p.x = p.radius;
+					p.vel.x *= -this.bounceCoefficient;
+				} else if (p.x >= width - p.radius) {
+					p.x = width - p.radius;
+					p.vel.x *= -this.bounceCoefficient;
+				}
+				if (p.y < p.radius) {
+					p.y = p.radius;
+					p.vel.y *= -this.bounceCoefficient;
+				} else if (p.y >= height - p.radius) {
+					p.y = height - p.radius;
+					p.vel.y *= -this.bounceCoefficient;
+				}
+			}
+		}
+
+		if (
+			this.hasMouseInteraction &&
+			this.heldParticleIndex !== null &&
+			mouseIsPressed
+		) {
+			const pHeld = this.particles[this.heldParticleIndex];
+			pHeld.set(mouseX, mouseY);
+			pHeld.clearVelocity();
 		}
 	}
 
@@ -258,50 +356,8 @@ class Physics2D {
 	}
 
 	update() {
-		this.updateParticles();
+		for (let i = 0; i < this.iters; i++) {
+			this.updateParticles();
+		}
 	}
-
-	// static lineLineIntersection(line1, line2) {
-	// 	const x1 = line1.a.x;
-	// 	const y1 = line1.a.y;
-	// 	const x2 = line1.b.x;
-	// 	const y2 = line1.b.y;
-	// 	const x3 = line2.a.x;
-	// 	const y3 = line2.a.y;
-	// 	const x4 = line2.b.x;
-	// 	const y4 = line2.b.y;
-	// 	const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-	// 	if (denom === 0) {
-	// 		return null; // Lines are parallel
-	// 	}
-	// 	const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
-	// 	const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / denom;
-	// 	if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
-	// 		return new Vec(x1 + t * (x2 - x1), y1 + t * (y2 - y1));
-	// 	}
-	// 	return null; // No intersection within the line segments
-	// }
-
-	// static lineCircleIntersection(line, circle) {
-	// 	const d = line.heading;
-	// 	const f = line.a.sub(circle);
-	// 	const a = d.magSq();
-	// 	const b = 2 * f.dot(d);
-	// 	const c = f.dot(f) - circle.r * circle.r;
-	// 	const discriminant = b * b - 4 * a * c;
-	// 	if (discriminant < 0) {
-	// 		return []; // No intersection
-	// 	}
-	// 	const sqrtDiscriminant = Math.sqrt(discriminant);
-	// 	const t1 = (-b - sqrtDiscriminant) / (2 * a);
-	// 	const t2 = (-b + sqrtDiscriminant) / (2 * a);
-	// 	const intersections = [];
-	// 	if (t1 >= 0 && t1 <= 1) {
-	// 		intersections.push(line.a.add(d.scale(t1)));
-	// 	}
-	// 	if (t2 >= 0 && t2 <= 1) {
-	// 		intersections.push(line.a.add(d.scale(t2)));
-	// 	}
-	// 	return intersections;
-	// }
 }
